@@ -8,12 +8,12 @@ The website will function similar to a simple social media site, where both serv
 
 ### Sketches
 A simple servicer page may look something like this:
-![Servicer Page](images\servicerPage.png)
+![Servicer Page](images/servicerPage.png)
 
 Clients can leave reviews, follow, or message servicers directly. 
 
 A servicers feed will be populated with potential jobs they may be interested in:
-![Servicer Feed](images\servicerFeed.png)
+![Servicer Feed](images/servicerFeed.png)
 
 
 ## Key Features
