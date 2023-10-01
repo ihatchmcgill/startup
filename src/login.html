@@ -6,19 +6,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Bargo Jobs HTML</title>
     <link rel="icon" href="../favicon.ico" />
+    <link rel="stylesheet" href="styles.css">
+    <hr />
   </head>
   <body>
-    <h1>Please Enter Username and Password to sign in.</h1>
+    <h1>Bargo Jobs<sup>&reg;</sup></h1>
+    <h3>Please Enter Username and Password to sign in</h3>
+    <hr />
     <form action="index.html">
-        <ul>
-            <li>
-                <label for="username">Username: </label>
-                <input type="text" id="text" name="varText" placeholder="Please Enter Your Username" />
-            </li>
-            <li>
-              <label for="password">Password: </label>
-              <input type="password" id="password" name="varPassword" placeholder="Please Enter Your Password" />
-            </li>
-        
+        <div class="container">
+            <ul>
+                <li>
+                    <label for="username">Username: </label>
+                    <input type="text" id="text" name="varText" required pattern=".*"/>
+                </li>
+                <li>
+                  <label for="password">Password: </label>
+                  <input type="password" id="password" name="varPassword" required pattern=".*">
+                </li>
+                    <label for="servicer">Service Provider</label>
+                    <input type="radio" id="servicerRadio" name="varRadio" value="servicerRadio" checked />
+                    <label for="client">Client</label>
+                    <input type="radio" id="client" name="varRadio" value="clientRadio" />
+            </ul>
+            <button type="submit">Submit</button>
+        </div>
     </form>
   </body>
