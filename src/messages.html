@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Tell browsers not to scale the viewport automatically -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bargo Jobs HTML</title>
+    <link rel="icon" href="../favicon.ico" />
+    <link rel="stylesheet" href="styles.css">
+    <hr />
+  </head>
+  <body>
+    <h1>Bargo Jobs<sup>&reg;</sup></h1>
+    <nav>
+        <!-- Menu is a semantic alternative to <ul> that represents an interaction -->
+        <menu>
+          <li><a href="index.html">Sign Out</a></li>
+          <li><a href="account.html">My Account</a></li>
+          <li><a href="feed.html">Feed</a></li>
+          <li><a href="company.html">Company Page</a></li>
+          <li><a href="messages.html">Messages</a></li>
+          <li><a href="about.html">About</a></li>
+        </menu>
+    </nav>
+    <hr />
+    <div class="content">
+        <h2>Inbox</h2>
+        <p>Here you are able to see all messages and load previous conversations. This will use a database to store
+            messages as well as websockets to support live messaging.
+        </p>
+    </div>
+    <hr />
+    <div id="chatbox">
+        <p>Friend: Hello there!</p>
+        <p>You: Hi! How can I help you?</p>
+    </div>
+      <input type="text" id="message" placeholder="Type your message">
+      <button id="send-button">Send</button>
+    
+    <footer>
+    <hr />
+    <br />
+    <a href="https://github.com/ihatchmcgill/startup-bargo">GitHub</a>
+    </footer>
+  </body>
+</html>

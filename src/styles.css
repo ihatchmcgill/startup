@@ -14,3 +14,17 @@ body {
 .content {
     margin-top: 20px;
 }
+.feed-item {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+
+  .feed-item img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .description {
+    margin-top: 10px;
+  }

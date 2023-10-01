@@ -11,21 +11,25 @@
   </head>
   <body>
     <h1>Welcome to Bargo Jobs<sup>&reg;</sup></h1>
-    <nav>
-        <!-- Menu is a semantic alternative to <ul> that represents an interaction -->
-        <menu>
-          <li><a href="login.html">Sign Out</a></li>
-          <li><a href="account.html">My Account</a></li>
-          <li><a href="feed.html">Feed</a></li>
-          <li><a href="company.html">Company Page</a></li>
-          <li><a href="messages.html">Messages</a></li>
-          <li><a href="about.html">About</a></li>
-        </menu>
-      </nav>
-      <footer>
-        <hr />
-        <br />
-        <a href="https://github.com/ihatchmcgill/startup-bargo">GitHub</a>
-      </footer>
+    <h3>Please Enter Username and Password to sign in</h3>
+    <hr />
+    <form action="feed.html">
+        <div class="container">
+            <ul>
+                <li>
+                    <label for="username">Username: </label>
+                    <input type="text" id="text" name="varText" required pattern=".*"/>
+                </li>
+                <li>
+                  <label for="password">Password: </label>
+                  <input type="password" id="password" name="varPassword" required pattern=".*">
+                </li>
+                    <label for="company">Company</label>
+                    <input type="radio" id="companyRadio" name="varRadio" value="companyRadio" checked />
+                    <label for="client">Client</label>
+                    <input type="radio" id="client" name="varRadio" value="clientRadio" />
+            </ul>
+            <button type="submit">Submit</button>
+        </div>
+    </form>
   </body>
-</html>
