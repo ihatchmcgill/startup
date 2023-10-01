@@ -44,6 +44,17 @@ The following technologies will be implemented in the following ways.
 - **WebSocket** - As clients and servicers communicate through messaging, web sockets send live data.
 - **React** - Application ported to use the React web framework.
 
+## HTML deliverable
 
+For this deliverable I built out the structure of my application using HTML.
 
+- **HTML pages** - Multiple HTML pages added to show general structure and layout of application
+- **Links** - The login page automatically links to the feed page. All pages link to each other for now, although
+there will be a difference between what pages customers and companies can see
+- **Text** - Each page and item in page is given a description to represent how it will be used in the application
+- **Images** - Images will be included for posts and companies
+- **Services** - Location web service will be used to help calcuate distances as that will be a factor in what posts are shown to what company.
+- **Login** - Input box and submit button for login.
+- **Database** - Lots of things will use the database including the login page as well as messages, posts, account info, company info, etc.
+- **WebSocket** - Messages and posts will be shown to users in real time.
 
