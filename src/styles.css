@@ -27,4 +27,11 @@ body {
 
   .description {
     margin-top: 10px;
+    margin-bottom: 10px;
+  }
+
+  .review-item {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
   }
