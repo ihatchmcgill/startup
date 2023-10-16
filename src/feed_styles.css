@@ -37,15 +37,16 @@ nav menu li a:hover {
 }
 
 
-.content{
-    text-align: center;
+.page-info{
+    text-align: left;
     color: #26F0F1;
     background-color: #202A25;
     display: flex;
     flex-direction: column;
+    margin: 0;
 }
 
-.content #search-button {
+.filter-area #search-button {
     padding: 10px;
     border: none;
     border-radius: 5px;
@@ -55,8 +56,22 @@ nav menu li a:hover {
     margin:0px;
 }
   
-.content #search-button:hover {
+.filter-area #search-button:hover {
     background-color: #2980b9;
+}
+
+.page-body{
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+}
+
+.filter-area:nth-child(1){
+    flex:1
+}
+
+.feed-area:nth-child(2){
+    flex:3
 }
 
 .feed-item {
