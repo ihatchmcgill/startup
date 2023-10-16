@@ -6,13 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Bargo Jobs HTML</title>
     <link rel="icon" href="../favicon.ico" />
-    <link rel="stylesheet" href="styles.css">
-    <hr />
+    <link rel="stylesheet" href="src/index_styles.css">
   </head>
   <body>
-    <h1>Welcome to Bargo Jobs<sup>&reg;</sup></h1>
-    <h3>Please Enter Username and Password to sign in</h3>
-    <hr />
+    <div class="header">
+      <h1>Bargo Jobs</h1>
+      <nav>
+        <ul>
+          <li><h3>Explore</h3></li>
+          <li><h3>Contact Us</h3></li>
+          <li><h3>Not a member? Create an account</h3></li>
+        </ul>
+      </nav>
+    </div>
+    
     <form action="src/feed.html">
         <div class="container">
             <ul>
@@ -24,11 +31,13 @@
                   <label for="password">Password: </label>
                   <input type="password" id="password" name="varPassword" required pattern=".*">
                 </li>
-                    <label for="company">Company</label>
-                    <input type="radio" id="companyRadio" name="varRadio" value="companyRadio" checked />
-                    <label for="client">Client</label>
-                    <input type="radio" id="client" name="varRadio" value="clientRadio" />
             </ul>
+            <div class="buttons">
+              <label for="company">Company</label>
+              <input type="radio" id="companyRadio" name="varRadio" value="companyRadio" checked />
+              <label for="client">Client</label>
+              <input type="radio" id="client" name="varRadio" value="clientRadio" />
+            </div>
             <button type="submit">Submit</button>
         </div>
     </form>
