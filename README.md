@@ -58,3 +58,14 @@ there will be a difference between what pages customers and companies can see
 - **Database** - Lots of things will use the database including the login page as well as messages, posts, account info, company info, etc.
 - **WebSocket** - Messages and posts will be shown to users in real time.
 
+## CSS deliverable
+
+For this deliverable I properly styled the application into its final appearance.
+
+- **Header, footer, and main content body** - Styling used throughout to give website a consistent and polished feel. 
+- **Navigation elements** - Created a more traditional navigation bar.
+- **Responsive to window resizing** - Used flex displays to ensure application can be resized.
+- **Application elements** - Elements are styled to look good and make the user experience simple and intuitive.
+- **Application text content** - Consistent fonts and color scheme.
+- **Application images** - Uses correct styling for the included images on the website. Most of them are just placeholders.
+
