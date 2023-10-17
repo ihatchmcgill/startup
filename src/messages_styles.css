@@ -45,6 +45,12 @@ nav menu li a:hover {
     margin: 0;
 }
 
+.content{
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
 .page-body{
     flex: 1;
     display: flex;
@@ -93,8 +99,8 @@ nav menu li a:hover {
 footer {
     background-color: #C4EBC8;
     text-align: center;
+    position: relative;
     color: #5F4BB6;
-    position: fixed;
     left: 0;
     bottom: 0;
     width: 100%;

@@ -46,6 +46,12 @@ nav menu li a:hover {
     margin: 0;
 }
 
+.content{
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
 .page-body{
     flex: 1;
     display: flex;
@@ -117,6 +123,9 @@ footer {
     background-color: #C4EBC8;
     text-align: center;
     color: #5F4BB6;
+    left: 0;
+    bottom: 0;
+    width: 100%;
 }
 
 footer a:hover {

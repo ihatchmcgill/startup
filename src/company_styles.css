@@ -77,6 +77,9 @@ footer {
     background-color: #C4EBC8;
     text-align: center;
     color: #5F4BB6;
+    left: 0;
+    bottom: 0;
+    width: 100%;
 }
 
 footer a:hover {
