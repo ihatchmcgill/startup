@@ -6,13 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Bargo Jobs HTML</title>
     <link rel="icon" href="../favicon.ico" />
-    <link rel="stylesheet" href="styles.css">
-    <hr />
+    <link rel="stylesheet" href="listing_styles.css">
   </head>
   <body>
-    <h1>Bargo Jobs<sup>&reg;</sup></h1>
-    <nav>
-        <!-- Menu is a semantic alternative to <ul> that represents an interaction -->
+    <div class="header">
+      <h1>Bargo Jobs</h1>
+      <nav>
         <menu>
           <li><a href="../index.html">Sign Out</a></li>
           <li><a href="./account.html">My Account</a></li>
@@ -23,15 +22,48 @@
           <li><a href="./about.html">About</a></li>
         </menu>
       </nav>
-      <hr />
-      <div class="content">
-        <h2>Create a Listing</h2>
-        <p>Here is where customers can create a listing. Listings will follow a strict template.</p>
-      </div>
-      <footer>
-        <hr />
-        <br />
-        <a href="https://github.com/ihatchmcgill/startup-bargo">GitHub</a>
-      </footer>
+    </div>
+    <div class="page-info">
+      <h2>Create a Listing</h2>
+    </div>
+    <div class="page-body">
+      <ul>
+        <li>
+          <div class="input-container">
+            <label>Category: </label>
+            <input type="text"/>
+          </div>
+        </li>
+        <li>
+          <div class="input-container">
+            <label>Listing Title: </label>
+            <input type="text"/>
+          </div>
+        </li>
+        <li>
+          <div class="input-container">
+            <label>Availability: </label>
+            <input type="text"/>
+          </div>
+        </li>
+        <li>
+          <div class="input-container">
+            <label>Contact Method: </label>
+            <input type="text"/>
+          </div>
+        </li>
+        <li>
+          <div class="input-container">
+            <label>Budget: </label>
+            <input type="text"/>
+          </div>
+        </li>
+    </ul>
+    <h5>Upload Photos</h5>
+    <button type="submit">Create</button>
+    </div>
+    <footer>
+      <a href="https://github.com/ihatchmcgill/startup-bargo">GitHub</a>
+    </footer>
   </body>
 </html>
