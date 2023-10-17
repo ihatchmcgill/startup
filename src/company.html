@@ -6,13 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Bargo Jobs HTML</title>
     <link rel="icon" href="../favicon.ico" />
-    <link rel="stylesheet" href="styles.css">
-    <hr />
+    <link rel="stylesheet" href="company_styles.css">
   </head>
   <body>
-    <h1>Bargo Jobs<sup>&reg;</sup></h1>
-    <nav>
-        <!-- Menu is a semantic alternative to <ul> that represents an interaction -->
+    <div class="header">
+      <h1>Bargo Jobs</h1>
+      <nav>
         <menu>
           <li><a href="../index.html">Sign Out</a></li>
           <li><a href="./account.html">My Account</a></li>
@@ -22,50 +21,54 @@
           <li><a href="./messages.html">Messages</a></li>
           <li><a href="./about.html">About</a></li>
         </menu>
-    </nav>
-    <hr />
-    <div class="content">
-        <h2>My Company</h2>
-        <div class="company Info">
-            <img src="https://static8.depositphotos.com/1378583/1010/i/450/depositphotos_10108949-stock-photo-blue-flame-logo.jpg" alt="Image 1"
-                width=100 height=100>
-            <p>Here you will be able to see info about your company. This is the page customers will see when exploring your
-                business. 
-            </p>
+      </nav>
+    </div>
+    <div class="page-info">
+      <h2>My Company</h2>
+    </div>
+    <div class="page-body">
+      <div class="company-info">
+        <div class="company-desc">
+          <p>Here you will be able to see info about your company. This is the page customers will see when exploring your
+            business. 
+          </p>
         </div>
-
-
+        <div class="company-icon">
+          <img src="https://static8.depositphotos.com/1378583/1010/i/450/depositphotos_10108949-stock-photo-blue-flame-logo.jpg" alt="Image 1"
+            width=100 height=100>
+        </div>
+      </div>
+      <div class="reviews">
         <h2>Reviews</h2>
         <p>Customers can read and leave reviews, and your overall rating is shown.</p>
         <div class="review-item">
-            <p>Alice Adams' Review</p>
-            <div class="description">
-              Description for Review 1 goes here.
-            </div>
-            <input type="text" class="review-response" placeholder="Reply to this review">
-            <button class="send-button">Send</button>
+          <p>Alice Adams' Review</p>
+          <div class="description">
+            Description for Review 1 goes here.
           </div>
-          <div class="review-item">
-            <p>Bob Billy's Review</p>
-            <div class="description">
-              Description for Review 2 goes here.
-            </div>
-            <input type="text" class="review-response" placeholder="Reply to this review">
-            <button class="send-button">Send</button>
+          <input type="text" class="review-response" placeholder="Reply to this review">
+          <button class="send-button">Send</button>
+        </div>
+        <div class="review-item">
+          <p>Bob Billy's Review</p>
+          <div class="description">
+            Description for Review 2 goes here.
           </div>
-          <div class="review-item">
-            <p>Cat Cathy's Review</p>
-            <div class="description">
-              Description for Review 3 goes here.
-            </div>
-            <input type="text" class="review-response" placeholder="Reply to this review">
-            <button class="send-button">Send</button>
+          <input type="text" class="review-response" placeholder="Reply to this review">
+          <button class="send-button">Send</button>
+        </div>
+        <div class="review-item">
+          <p>Cat Cathy's Review</p>
+          <div class="description">
+            Description for Review 3 goes here.
           </div>
+          <input type="text" class="review-response" placeholder="Reply to this review">
+          <button class="send-button">Send</button>
+        </div>
+      </div>
     </div>
-      <footer>
-        <hr />
-        <br />
-        <a href="https://github.com/ihatchmcgill/startup-bargo">GitHub</a>
-      </footer>
+    <footer>
+      <a href="https://github.com/ihatchmcgill/startup-bargo">GitHub</a>
+    </footer>
   </body>
 </html>

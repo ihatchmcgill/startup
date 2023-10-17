@@ -82,12 +82,12 @@ nav menu li a:hover {
     background-color: #2980b9;
 }
 
-ul {
+.page-body ul {
     list-style: none;
     padding: 0;
 }
   
-li {
+.page-body li {
     margin-bottom: 10px;
 }
 
