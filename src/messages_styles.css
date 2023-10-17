@@ -36,7 +36,6 @@ nav menu li a:hover {
     color: #86A5D9; 
 }
 
-
 .page-info{
     text-align: center;
     color: #26F0F1;
@@ -50,73 +49,55 @@ nav menu li a:hover {
     flex: 1;
     display: flex;
     flex-direction: row;
-    text-align: center;
 }
 
-.filter-area{
-    color: #5F4BB6;
-    background-color: lightgrey;
-    border: 1px solid black;
-}
-.filter-area #search-button {
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-    background-color: #3498db;
-    color: white;
-    cursor: pointer;
-    margin:5px;
-    width: 75px;
-}
-  
-.filter-area #search-button:hover {
-    background-color: #2980b9;
+.message-senders ul{
+    list-style-type: none;
 }
 
-.filter-area #filter-button {
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-    background-color: #3498db;
-    color: white;
-    cursor: pointer;
-    margin:5px;
-    width: 75px;
-}
-  
-.filter-area #filter-button:hover {
-    background-color: #2980b9;
-}
-
-.filter-area:nth-child(1){
+.message-senders:nth-child(1){
     flex:1
 }
 
-.feed-area:nth-child(2){
+.chatbox:nth-child(2){
+    text-align: left;
+    padding-left: 20px;
     flex:3
 }
 
-.feed-item {
-    font-weight: bold;
+.user-item{
+    flex: 1;
+    display: flex;
+    flex-direction: row;
     border: 1px solid black;
+}
+
+.user-item p:hover{
+    color:#5F4BB6
+}
+
+.send-button{
     padding: 10px;
-    
+    border: none;
+    border-radius: 5px;
+    background-color: #3498db;
+    color: white;
+    cursor: pointer;
+    margin:0px;
 }
 
-.feed-item img {
-    max-width: 100%;
-    height: auto;
-}
-
-.description {
-    margin-top: 10px;
-    margin-bottom: 10px;
+.send-button:hover {
+    background-color: #2980b9;
 }
 
 footer {
     background-color: #C4EBC8;
     text-align: center;
     color: #5F4BB6;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
 }
 
 footer a:hover {
