@@ -1,5 +1,5 @@
 body, html {
-    font-family: Arial, sans-serif;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     margin: 0;
     padding: 0;
 }
@@ -51,11 +51,12 @@ nav menu li a:hover {
     display: flex;
     flex-direction: row;
     text-align: center;
-    
 }
 
 .filter-area{
-    border: 1px solid black;
+    color: #5F4BB6;
+    background-color: lightgrey;
+    border: 1px solid white;
 }
 .filter-area #search-button {
     padding: 10px;
