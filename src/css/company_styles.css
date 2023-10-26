@@ -73,6 +73,10 @@ nav menu li a:hover {
     padding: 10px;
 }
 
+.page-body{
+    min-height: 100vh;
+}
+
 footer {
     background-color: #C4EBC8;
     text-align: center;

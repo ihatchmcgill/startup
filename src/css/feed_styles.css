@@ -17,11 +17,14 @@ body, html {
 }
 
 nav{
+    display: flex;
+    justify-content: space-between;
     font-size: 1em;
     color: #202A25;
 }
 
 nav menu {
+    flex: 1;
     list-style-type: none;
     padding: 0;
     margin: 0;
@@ -36,6 +39,9 @@ nav menu li a:hover {
     color: #86A5D9; 
 }
 
+#user-name{
+    color:#5F4BB6
+}
 
 .page-info{
     text-align: center;

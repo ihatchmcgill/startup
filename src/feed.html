@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Bargo Jobs HTML</title>
     <link rel="icon" href="../favicon.ico" />
-    <link rel="stylesheet" href="feed_styles.css">
+    <link rel="stylesheet" href="css/feed_styles.css">
   </head>
   <body>
     <div class="header">
@@ -21,6 +21,7 @@
           <li><a href="./messages.html">Messages</a></li>
           <li><a href="./about.html">About</a></li>
         </menu>
+        <div id="user-name"></div>
       </nav>
     </div>
       <div class="page-info">
@@ -30,10 +31,14 @@
         <div class="page-body">
           <div class="filter-area">
             <h2>Explore and Filter</h2>
-            <input type="text" id="search-text" placeholder="Search open listings">
-            <button id="search-button">Search</button>
-            <input type="text" id="filter-text" placeholder="Filter">
-            <button id="filter-button">Apply</button>
+            <div class="search-area">
+              <input type="text" id="search-text" placeholder="Search open listings">
+              <button id="search-button">Search</button>
+            </div>
+            <div class="filter">
+              <input type="text" id="filter-text" placeholder="Filter">
+              <button id="filter-button">Apply</button>
+            </div>
           </div>
           <div class="feed-area">
             <div class="feed-item">
@@ -66,5 +71,6 @@
       <footer>
         <a href="https://github.com/ihatchmcgill/startup-bargo">GitHub</a>
       </footer>
+      <script src="js/feed.js"></script>
   </body>
 </html>
