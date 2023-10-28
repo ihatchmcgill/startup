@@ -1,38 +1,55 @@
-function sendMessage() {
+async function sendMessage() {
     const message = document.getElementById('message-to-send').value
-    createNewMessageEl(message)
+    await createNewMessageEl(message)
     //clear input text box
     const textEl = document.getElementById('message-to-send')
     textEl.value = ''
 }
 
-function createNewMessageEl(message){
+async function createNewMessageEl(message){
     const parentEl = document.getElementById('messages-id')
     const newMessageEl = document.createElement('p')
     newMessageEl.textContent = `You: ${message}`
     parentEl.appendChild(newMessageEl)
+
+    try{
+        await storeMessage(message)
+    }catch(e){
+        //something went wrong with the db
+        console.log('Failed to save messages')
+    }
+}
+
+async function storeMessage(message){
+    //Add new message to message array in local storage
+    const currUsername = localStorage.getItem('userName')
+    const currInboxUsername = localStorage.getItem('currentInboxUsername')
+    const currInboxMessages = JSON.parse(localStorage.getItem(currInboxUsername))
+    const messageToStore = {username: currUsername, message: message, timestamp: Date.now()}
+    currInboxMessages.push(messageToStore)
+    localStorage.setItem(currInboxUsername, JSON.stringify(currInboxMessages))
 }
 
 async function switchInbox(element){
-    const username = element.textContent
+    const inboxUsername = element.textContent
 
     //Don't load anything new if current inbox is selected
-    if (localStorage.getItem('currentInboxUsername') === username){
+    if (localStorage.getItem('currentInboxUsername') === inboxUsername){
         return
     }
-    localStorage.setItem('currentInboxUsername', username)
+    localStorage.setItem('currentInboxUsername', inboxUsername)
 
     const chatEl = document.getElementById('chat-name')
     chatEl.textContent = element.textContent
     try{
-        await loadMessages(username)
+        await loadMessages(inboxUsername)
     }catch(e){
         //Something went wrong with the db
     }
     
 }
 
-async function loadMessages(username){
+async function loadMessages(inboxUsername){
     //will eventually use a database to load messages from specific user
     const parentEl = document.getElementById('messages-id')
     
@@ -40,43 +57,42 @@ async function loadMessages(username){
         parentEl.removeChild(parentEl.firstChild)
     }
 
-    if(username === 'Alice Adams'){
-        //Loads Alice's messages
-        const sampleAliceMsg = document.createElement('p')
-        const sampleUserMsg = document.createElement('p')
+    const currInboxMessages = JSON.parse(localStorage.getItem(inboxUsername))
 
-        sampleAliceMsg.textContent = 'Alice: Hello there!'
-        sampleUserMsg.textContent = 'You: Hi! How can I help you?'
-
-        parentEl.appendChild(sampleAliceMsg)
-        parentEl.appendChild(sampleUserMsg)
-    }
-    else if(username === 'Bob Billy'){
-        //Loads Bob's messages
-        const sampleBobMsg = document.createElement('p')
-        const sampleUserMsg = document.createElement('p')
-
-        sampleBobMsg.textContent = 'Bob: Can you help me with this job?'
-        sampleUserMsg.textContent = 'You: Sure! What do you need?'
-
-        parentEl.appendChild(sampleBobMsg)
-        parentEl.appendChild(sampleUserMsg)
-    }
-    else{
-        //Loads Cat's messages
-        const sampleCatMsg = document.createElement('p')
-        const sampleUserMsg = document.createElement('p')
-
-        sampleCatMsg.textContent = 'Cat: What is your best price for this job?'
-        sampleUserMsg.textContent = 'You: I am not able to help you with carpentry, sorry.'
-
-        parentEl.appendChild(sampleCatMsg)
-        parentEl.appendChild(sampleUserMsg)
-    }
+    currInboxMessages.forEach((message) => {
+        //message from sender
+        if(message.username === inboxUsername){
+            const newMessageEl = document.createElement('p')
+            const firstName = inboxUsername.toString().split(' ')
+            newMessageEl.textContent = `${firstName[0]}: ${message.message}`
+            parentEl.appendChild(newMessageEl)
+        }
+        //message from user
+        else{
+            const newMessageEl = document.createElement('p')
+            newMessageEl.textContent = `You: ${message.message}`
+            parentEl.appendChild(newMessageEl)
+        }
+    })
 }
 
 
 document.addEventListener('DOMContentLoaded', function() {
     loadMessages('Alice Adams')
     localStorage.setItem('currentInboxUsername', 'Alice Adams')
+
+    //Populate local storage with placeholder messages
+    let aliceMessages = []
+    aliceMessages.push({username: 'Alice Adams', message: 'Hello there!', timestamp: Date.now()})
+
+    let bobMessages = []
+    bobMessages.push({username: 'Bob Billy', message: 'Can you help me with this job?', timestamp: Date.now()})
+
+    let catMessages = []
+    catMessages.push({username: 'Cat Cathy', message: 'What is your best price for this job?', timestamp: Date.now()})
+
+    localStorage.setItem('Alice Adams', JSON.stringify(aliceMessages))
+    localStorage.setItem('Bob Billy', JSON.stringify(bobMessages))
+    localStorage.setItem('Cat Cathy', JSON.stringify(catMessages))
+
 });
