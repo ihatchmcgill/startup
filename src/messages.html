@@ -34,35 +34,41 @@
               <div class="user-item">
                 <img class="profile-icon" src="https://cdn-icons-png.flaticon.com/512/3106/3106773.png" alt="Profile Icon"
                 width=50 height=50>
-                <p class="username">Alice Adams</p>
+                <p class="username" onclick="switchInbox(this)">Alice Adams</p>
               </div>
             </li>
             <li>
               <div class="user-item">
                 <img class="profile-icon" src="https://cdn-icons-png.flaticon.com/512/3106/3106773.png" alt="Profile Icon"
                 width=50 height=50>
-                <p class="username">Bob Billy</p>
+                <p class="username" onclick="switchInbox(this)">Bob Billy</p>
               </div>
             </li>
             <li>
               <div class="user-item">
                 <img class="profile-icon" src="https://cdn-icons-png.flaticon.com/512/3106/3106773.png" alt="Profile Icon"
                   width=50 height=50>
-                <p class="username">Cat Cathy</p>
+                <p class="username" onclick="switchInbox(this)">Cat Cathy</p>
               </div>
             </li>
           </ul>
         </div>
         <div class="chatbox">
-          <p>Alice: Hello there!</p>
-          <p>You: Hi! How can I help you?</p>
-          <input type="text" id="message" placeholder="Type your message">
-         <button class="send-button">Send</button>
+          <div id="chat-name">
+            Alice Adams
+          </div>
+          <div class="messages" id="messages-id">
+          </div>
+          <div class="message-controls">
+            <input type="text" id="message-to-send" placeholder="Type your message">
+            <button class="send-button" onclick="sendMessage()">Send</button>
+          </div>
         </div>
       </div>
     </div>
     <footer>
     <a href="https://github.com/ihatchmcgill/startup-bargo">GitHub</a>
     </footer>
+    <script src="js/messages.js"></script>
   </body>
 </html>

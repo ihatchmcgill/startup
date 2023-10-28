@@ -67,8 +67,35 @@ nav menu li a:hover {
 
 .chatbox:nth-child(2){
     text-align: left;
-    padding-left: 20px;
     flex:3
+}
+
+.chatbox{
+    border: 1px solid black;
+    padding-left: 0px;
+}
+
+.messages {
+    padding-left: 20%;
+    padding-right: 20%;
+}
+
+.message-controls{
+    text-align: center;
+}
+
+.message-controls input{
+    width: 55%
+}
+
+
+#chat-name {
+    text-align: center;
+    color: black;
+    background-color: lightgray;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
 }
 
 .user-item{
