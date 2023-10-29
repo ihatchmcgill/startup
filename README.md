@@ -69,3 +69,13 @@ For this deliverable I properly styled the application into its final appearance
 - **Application text content** - Consistent fonts and color scheme.
 - **Application images** - Uses correct styling for the included images on the website. Most of them are just placeholders.
 
+
+## JavaScript deliverable
+
+For this deliverable I implemented by JavaScript so that the application works for a single user. I also added placeholders for future technology.
+
+- **login** - When you press enter or the login button it takes you to the feedpage and saves your username inside the localStorage. The username is used throughout the application.
+- **database** - Displays messages, reviews, and feed all dynamically through the use of localStorage as a place holder for real database values
+- **WebSocket** - I implemented a way to send messages and switch between inboxes. This will be replaced with WebSocket messages later.
+- **application logic** - The application is much more complete now and users can interact with it in many different ways. This includes creating feed posts, replying to company reviews, and sending messages to other users.
+
