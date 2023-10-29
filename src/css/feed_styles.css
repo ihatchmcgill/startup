@@ -111,6 +111,12 @@ nav menu li a:hover {
     flex:3
 }
 
+.feed-area{
+    height: 600px;
+    overflow: auto; 
+    border: 1px solid #ccc;
+}
+
 .feed-item {
     font-weight: bold;
     border: 1px solid black;

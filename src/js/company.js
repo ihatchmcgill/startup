@@ -1,4 +1,4 @@
-function reply(buttonEl){
+async function reply(buttonEl){
 
     //get index of particular reply
     let reviewIndex = buttonEl.id.match(/\d+?/)
@@ -29,7 +29,11 @@ function reply(buttonEl){
     //store comment
     const comment = {author: localStorage.getItem('userName'), description: inputField.value}
     if(reviewAuthor){
-        storeComment(comment, reviewAuthor)
+        try{
+            await storeComment(comment, reviewAuthor)
+        }catch(e){
+            //failed to save comment
+        }
     }
 
     //clear input field
@@ -46,7 +50,7 @@ function getAuthorUser(description){
     }
 }
 
-function storeComment(comment, reviewAuthor){
+async function storeComment(comment, reviewAuthor){
     const reviewArr = JSON.parse(localStorage.getItem('reviews'))
     reviewArr.forEach((review) => {
         if(review.author === reviewAuthor){

@@ -28,44 +28,47 @@
     </div>
     <div class="content">
       <div class="page-body">
-        <ul>
-          <li>
-            <div class="input-container">
-              <label>Category: </label>
-              <input type="text"/>
-            </div>
-          </li>
-          <li>
-            <div class="input-container">
-              <label>Listing Title: </label>
-              <input type="text"/>
-            </div>
-          </li>
-          <li>
-            <div class="input-container">
-              <label>Availability: </label>
-              <input type="text"/>
-            </div>
-          </li>
-          <li>
-            <div class="input-container">
-              <label>Contact Method: </label>
-              <input type="text"/>
-            </div>
-          </li>
-          <li>
-            <div class="input-container">
-              <label>Budget: </label>
-              <input type="text"/>
-            </div>
-          </li>
-      </ul>
-      <h5>Upload Photos</h5>
-      <button type="submit">Create</button>
+        <form>
+          <ul>
+            <li>
+              <div class="input-container" >
+                <label>Category: </label>
+                <input type="text" id="category" required pattern=".*"/>
+              </div>
+            </li>
+            <li>
+              <div class="input-container">
+                <label>Listing Title: </label>
+                <input type="text" id="title" required pattern=".*"/>
+              </div>
+            </li>
+            <li>
+              <div class="input-container">
+                <label>Availability: </label>
+                <input type="text" id="availability" required pattern=".*"/>
+              </div>
+            </li>
+            <li>
+              <div class="input-container" >
+                <label>Contact Method: </label>
+                <input type="text" id="contact-method" required pattern=".*"/>
+              </div>
+            </li>
+            <li>
+              <div class="input-container">
+                <label>Budget: </label>
+                <input type="text" id="budget" required pattern=".*"/>
+              </div>
+            </li>
+          </ul>
+          <h5>Upload Photos</h5>
+          <button type="submit" onclick="createListing()">Create</button>
+        </form>
       </div>
     </div>
     <footer>
       <a href="https://github.com/ihatchmcgill/startup-bargo">GitHub</a>
     </footer>
+    <script src="js/listing.js"></script>
   </body>
 </html>
