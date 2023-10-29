@@ -81,18 +81,23 @@ document.addEventListener('DOMContentLoaded', function() {
     loadMessages('Alice Adams')
     localStorage.setItem('currentInboxUsername', 'Alice Adams')
 
-    //Populate local storage with placeholder messages
-    let aliceMessages = []
-    aliceMessages.push({username: 'Alice Adams', message: 'Hello there!', timestamp: Date.now()})
-
-    let bobMessages = []
-    bobMessages.push({username: 'Bob Billy', message: 'Can you help me with this job?', timestamp: Date.now()})
-
-    let catMessages = []
-    catMessages.push({username: 'Cat Cathy', message: 'What is your best price for this job?', timestamp: Date.now()})
-
-    localStorage.setItem('Alice Adams', JSON.stringify(aliceMessages))
-    localStorage.setItem('Bob Billy', JSON.stringify(bobMessages))
-    localStorage.setItem('Cat Cathy', JSON.stringify(catMessages))
+    if(!localStorage.getItem('Alice Adams')){
+        //Populate local storage with placeholder messages
+        let aliceMessages = []
+        aliceMessages.push({username: 'Alice Adams', message: 'Hello there!', timestamp: Date.now()})
+        localStorage.setItem('Alice Adams', JSON.stringify(aliceMessages))
+    }
+    if(!localStorage.getItem('Bob Billy')){
+        //Populate local storage with placeholder messages
+        let bobMessages = []
+        bobMessages.push({username: 'Bob Billy', message: 'Can you help me with this job?', timestamp: Date.now()})
+        localStorage.setItem('Bob Billy', JSON.stringify(bobMessages))
+    }
+    if(!localStorage.getItem('Cat Cathy')){
+        //Populate local storage with placeholder messages
+        let catMessages = []
+        catMessages.push({username: 'Cat Cathy', message: 'What is your best price for this job?', timestamp: Date.now()})
+        localStorage.setItem('Cat Cathy', JSON.stringify(catMessages))
+    }
 
 });
