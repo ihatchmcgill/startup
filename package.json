@@ -1,0 +1,12 @@
+{
+  "name": "startup",
+  "version": "1.0.0",
+  "description": "When it comes to taking care of the jobs that you need done, there isn't anything that gets in the way more than needing to reach out to dozens of servicers to compare prices, quality, and timelines. With Bargo Jobs, we focus on eliminating the time it takes to get your jobs done. Like a social media platform, Bargo connects clients with servicers and uses your preferences to find you the very best ones for the job. At Bargo Jobs, we help your dreams become reality.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
