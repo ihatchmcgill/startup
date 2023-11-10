@@ -14,16 +14,50 @@ app.use(express.static('public'));
 const apiRouter = express.Router();
 app.use(`/api`, apiRouter);
 
-// GetScores
-apiRouter.get('/scores', (_req, res) => {
-  res.send(scores);
+
+// Placeholder for login endpoint
+apiRouter.put('/login', (req, res) => {
+  
 });
 
-// SubmitScore
-apiRouter.post('/score', (req, res) => {
-  scores = updateScores(req.body, scores);
-  res.send(scores);
+// Endpoint to get messages for a specific user
+apiRouter.get('/messages', (req, res) => {
+  //get the username
+  const username = req.params.username
+  const chatId = req.params.chat_id
+
+  const messages = getMessages(username, chatId)
+  res.send(messages)
+})
+
+// Endpoint to save a new message 
+apiRouter.post('/message', (req, res) => {
+  const username = req.params.username
+  const chatId = req.params.chat_id
+
+  const message = saveMessage(username, chatId, req.body)
+  res.send(message)
 });
+
+// Endpoint to get listings for a user
+apiRouter.get('/listings', (req, res) => {
+  //get the username
+  const username = req.params.username
+
+  //listings are stored in db and getListings filters them to be tailored to user
+  const listings = getListings(username)
+  res.send(listings)
+})
+
+// Endpoint to create a new listing 
+apiRouter.post('/listing', (req, res) => {
+  const listing = createListing(req.body)
+  res.send(listing)
+});
+
+
+
+
 
 // Return the application's default page if the path is unknown
 app.use((_req, res) => {
