@@ -27,11 +27,11 @@ async function reply(buttonEl){
     reviewItemComments.appendChild(reviewComment)
 
     //store comment
-    const comment = {author: localStorage.getItem('username'), description: inputField.value}
+    const comment = {user: localStorage.getItem('username'), description: inputField.value}
     if(reviewAuthor){
         try{
             await storeComment(comment, reviewAuthor)
-        }catch(e){
+        }catch{
             //failed to save comment
         }
     }
@@ -51,25 +51,39 @@ function getAuthorUser(description){
 }
 
 async function storeComment(comment, reviewAuthor){
-    const reviewArr = JSON.parse(localStorage.getItem('reviews'))
-    reviewArr.forEach((review) => {
-        if(review.author === reviewAuthor){
+    let reviews = []
+    try{
+        const response = await fetch('/src/api/reviews')
+        reviews = await response.json()
+    } catch {
+        reviews = JSON.parse(localStorage.getItem('reviews'))
+    }
+
+    reviews.some((review) =>  {
+        if(review.authorName === reviewAuthor){
             review.comments.push(comment)
-            localStorage.setItem('reviews', JSON.stringify(reviewArr))
-            return
+            fetch('/src/api/updateReview', {
+                    method: 'POST',
+                    headers: {'content-type': 'application/json'},
+                    body: JSON.stringify(review),
+            }).then(response => {
+                return true
+            }).catch(error =>{
+                localStorage.setItem('reviews', JSON.stringify(reviews))
+                return true
+            })
+
         }
     })
 }
 
 
-async function loadReviews(){
+async function loadReviews(reviews){
     //Uses the database to retrieve company reviews
     const parentEl = document.getElementById('review-items-list')
-    const reviewArr = JSON.parse(localStorage.getItem('reviews'))
 
     let i = 0
-    reviewArr.forEach((review) => {
-        
+    reviews.forEach((review) => {
         //begin creating the review items to populate the html list
         const divReviewItem = document.createElement('div')
         divReviewItem.setAttribute('class', 'review-item')
@@ -82,7 +96,7 @@ async function loadReviews(){
         //review description
         const divReviewDesc = document.createElement('div')
         divReviewDesc.setAttribute('class', 'review-description')
-        divReviewDesc.textContent = `${review.author}: ${review.description}`
+        divReviewDesc.textContent = `${review.authorName}: ${review.description}`
 
         //appending children to parent list
         divReviewItem.appendChild(textReviewStars)
@@ -100,7 +114,7 @@ async function loadReviews(){
 
                 const commentText = document.createElement('p')
                 commentText.setAttribute('class', 'comment-text')
-                commentText.textContent = `${comment.author}: ${comment.description}`
+                commentText.textContent = `${comment.user}: ${comment.description}`
 
                 reviewComment.appendChild(commentText)
                 divReviewComments.appendChild(reviewComment)
@@ -131,28 +145,16 @@ async function loadReviews(){
         parentEl.appendChild(divReviewItem)
         i++
     })
-    
 }
 
-
-function populateSampleReviews() {
-    const reviewItem1 = {rating: 5, author: 'Alice Adams', description: 'Love your work!', timestamp: Date.now(), comments: []}
-    const reviewItem2 = {rating: 4, author: 'Bob Billy', description: 'Can\'t wait to work with you more in the future', timestamp: Date.now(), comments: []}
-    const reviewItem3 = {rating: 1, author: 'Cat Cathy', description: 'Difficult to contact and was slow to respond', timestamp: Date.now(), comments: []}
-
-    let reviewArr = []
-    reviewArr.push(reviewItem1)
-    reviewArr.push(reviewItem2)
-    reviewArr.push(reviewItem3)
-
-    return reviewArr
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    let reviews = localStorage.getItem('reviews')
-    if(!reviews){
-        reviews = populateSampleReviews()
+document.addEventListener('DOMContentLoaded', async function() {
+    let reviews = []
+    try{
+        const response = await fetch('/src/api/reviews')
+        reviews = await response.json()
         localStorage.setItem('reviews', JSON.stringify(reviews))
+    } catch {
+        reviews = localStorage.getItem('reviews')
     }
-    loadReviews()
+    await loadReviews(reviews)
 });

@@ -57,7 +57,7 @@ apiRouter.post('/listing', (req, res) => {
 //Endpoint to get all the reviews for specific servicer
 apiRouter.get('/reviews', (req, res) => {
   //get the username
-  const username = req.params.username
+  const username = req.query.username
 
   //reviews are stored in the servicer table
   const reviews = getReviews(username)
@@ -70,9 +70,17 @@ apiRouter.post('/review', (req, res) => {
   const username = req.params.username
 
   //reviews are stored in the servicer table
-  saveReview(username, req.body)
+  const review = saveReview(username, req.body)
   res.send(review)
 })
+
+apiRouter.post('/updateReview', (req, res) => {
+  //reviews are stored in the servicer table
+  const review = updateReview(req.body)
+  res.send(review)
+})
+
+
 
 // Return the application's default page if the path is unknown
 app.use((_req, res) => {
@@ -126,6 +134,11 @@ function saveListing(listing){
 
 
 let reviews = []
+
+reviews.push({rating: 5, user: 'alice_123', authorName: 'Alice Adams', servicer: 'Isaac', description: 'Love your work!', timestamp: Date.now(), comments: []})
+reviews.push({rating: 4, user: 'bbBoy2', authorName: 'Bob Billy', servicer: 'Isaac', description: 'Can\'t wait to work with you more in the future', timestamp: Date.now(), comments: []})
+reviews.push({rating: 1, user: 'meowcat4', authorName: 'Cat Cathy', servicer: 'Isaac', description: 'Difficult to contact and was slow to respond', timestamp: Date.now(), comments: []})
+
 function getReviews(username){
   //get specific reviews for user from db
   return reviews
@@ -133,4 +146,16 @@ function getReviews(username){
 
 function saveReview(username, review){
   reviews.push({servicer: username, review: review})
+  return review
+}
+
+function updateReview(updatedReview){
+  console.log(reviews)
+  console.log(updatedReview)
+  const index = reviews.findIndex(review => review.authorName === updatedReview.authorName);
+
+  if (index !== -1) {
+    // Found a matching review, update it
+    reviews.splice(index, 1, updatedReview);
+  }
 }
