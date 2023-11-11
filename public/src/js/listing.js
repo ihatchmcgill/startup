@@ -31,21 +31,30 @@ async function createListing(){
     listing.contactMethod = document.getElementById('contact-method').value
 
     try{
-        await storeListing(listing)
+        await saveListing(listing)
     }catch(e){
         //unable to store in db properly
     }
 }
 
 
-async function storeListing(listing){
+async function saveListing(listing){
     let listings
-    if(!localStorage.getItem('listings')){
-        listings = []
+    try {
+        const response = await fetch('/api/listing', {
+          method: 'POST',
+          headers: {'content-type': 'application/json'},
+          body: JSON.stringify(listing),
+        });
+    }catch(e){
+        //backend service failed, use local
+        if(!localStorage.getItem('listings')){
+            listings = []
+        }
+        else{
+            listings = JSON.parse(localStorage.getItem('listings'))
+        }
+            listings.push(listing)
+            localStorage.setItem('listings', JSON.stringify(listings))
     }
-    else{
-        listings = JSON.parse(localStorage.getItem('listings'))
-    }
-        listings.push(listing)
-        localStorage.setItem('listings', JSON.stringify(listings))
 }

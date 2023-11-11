@@ -112,3 +112,13 @@ function saveListing(listing){
   listings.push(listing)
 }
 
+
+let reviews = []
+function getReviews(username){
+  //get specific reviews for user from db
+  return reviews
+}
+
+function saveReview(review){
+  reviews.push(review)
+}
