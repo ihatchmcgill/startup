@@ -22,20 +22,16 @@ apiRouter.put('/login', (req, res) => {
 
 // Endpoint to get messages for a specific user
 apiRouter.get('/messages', (req, res) => {
-  //get the username
-  const username = req.params.username
+  //get the chatId
   const chatId = req.params.chat_id
 
-  const messages = getMessages(username, chatId)
+  const messages = getMessages(chatId)
   res.send(messages)
 })
 
 // Endpoint to save a new message 
 apiRouter.post('/message', (req, res) => {
-  const username = req.params.username
-  const chatId = req.params.chat_id
-
-  const message = saveMessage(username, chatId, req.body)
+  const message = saveMessage(req.body)
   res.send(message)
 });
 
@@ -44,6 +40,9 @@ apiRouter.get('/listings', (req, res) => {
   //get the username
   const username = req.params.username
 
+  //TODO: use username to lookup user in DB, pass user to getListings
+
+
   //listings are stored in db and getListings filters them to be tailored to user
   const listings = getListings(username)
   res.send(listings)
@@ -51,13 +50,29 @@ apiRouter.get('/listings', (req, res) => {
 
 // Endpoint to create a new listing 
 apiRouter.post('/listing', (req, res) => {
-  const listing = createListing(req.body)
+  const listing = saveListing(req.body)
   res.send(listing)
 });
 
+//Endpoint to get all the reviews for specific servicer
+apiRouter.get('/reviews', (req, res) => {
+  //get the username
+  const username = req.params.username
 
+  //reviews are stored in the servicer table
+  const reviews = getReviews(username)
+  res.send(reviews)
+})
 
+//Endpoint to save a new review
+apiRouter.post('/review', (req, res) => {
+  //get the username
+  const username = req.params.username
 
+  //reviews are stored in the servicer table
+  const review = saveReview(username, req.body)
+  res.send(review)
+})
 
 // Return the application's default page if the path is unknown
 app.use((_req, res) => {
@@ -67,3 +82,33 @@ app.use((_req, res) => {
 app.listen(port, () => {
   console.log(`Listening on port ${port}`);
 });
+
+
+//use a chatId to determine all messages within a chat
+let messages = []
+function getMessages(chatId){
+  let userMessages = []
+  for(message in messages){
+    if((message.chatId === chatId)){
+      userMessages.push(message)
+    }
+  }
+  return userMessages
+}
+
+
+function saveMessage(message){
+  messages.push(message)
+}
+
+let listings = []
+function getListings(username){
+  //use specific information about the user to retrieve relavant listings
+  //use db to implement this
+  return listings;
+}
+
+function saveListing(listing){
+  listings.push(listing)
+}
+
