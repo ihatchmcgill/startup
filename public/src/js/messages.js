@@ -1,70 +1,105 @@
+document.addEventListener('DOMContentLoaded', async function() {
+    console.log('starting')
+    localStorage.setItem('currentChatId', '1')
+    await loadMessages('1')
+});
+
+function getLocalMessages(requestedChatId){
+    const messages = localStorage.getItem('messages')
+    //Populate local storage with placeholder messages
+    let userMessages = []
+    messages.forEach(message => {
+        if((message.chatId === requestedChatId)){
+            userMessages.push(message)
+        }
+    })
+    return userMessages
+}
+
 async function sendMessage() {
-    const message = document.getElementById('message-to-send').value
-    await createNewMessageEl(message)
+    const messageText = document.getElementById('message-to-send').value
+    await createNewMessageEl(messageText)
     //clear input text box
     const textEl = document.getElementById('message-to-send')
     textEl.value = ''
 }
 
-async function createNewMessageEl(message){
+async function createNewMessageEl(messageText){
     const parentEl = document.getElementById('messages-id')
     const newMessageEl = document.createElement('p')
-    newMessageEl.textContent = `You: ${message}`
+    newMessageEl.textContent = `You: ${messageText}`
     parentEl.appendChild(newMessageEl)
-
-    try{
-        await storeMessage(message)
-    }catch(e){
-        //something went wrong with the db
-        console.log('Failed to save messages')
+    const newMessage = {
+        chatId: localStorage.getItem('currentChatId', '1'),
+        user: localStorage.getItem('username'),
+        //the user will be used to get the name from the db
+        authorName: '(db placeholder)',
+        message: messageText,
+        timestamp: Date.now()
     }
+    await storeMessage(newMessage)
 }
 
-async function storeMessage(message){
+async function storeMessage(newMessage){
     //Add new message to message array in local storage
-    const currUsername = localStorage.getItem('userName')
-    const currInboxUsername = localStorage.getItem('currentInboxUsername')
-    const currInboxMessages = JSON.parse(localStorage.getItem(currInboxUsername))
-    const messageToStore = {username: currUsername, message: message, timestamp: Date.now()}
-    currInboxMessages.push(messageToStore)
-    localStorage.setItem(currInboxUsername, JSON.stringify(currInboxMessages))
+    try{
+        const response = await fetch('/src/api/message', {
+            method: 'POST',
+            headers: {'content-type': 'application/json'},
+            body: JSON.stringify(newMessage),
+        });
+        localStorage.setItem('messages', JSON.stringify(await response.json()))
+    } catch {
+        const messages = JSON.parse(localStorage.getItem('messages'))
+        messages.push(newMessage)
+        localStorage.setItem('messages', JSON.stringify(messages))
+    }
 }
 
 async function switchInbox(element){
-    const inboxUsername = element.textContent
-
-    //Don't load anything new if current inbox is selected
-    if (localStorage.getItem('currentInboxUsername') === inboxUsername){
-        return
-    }
-    localStorage.setItem('currentInboxUsername', inboxUsername)
-
+    const chatId = element.parentNode.id
     const chatEl = document.getElementById('chat-name')
     chatEl.textContent = element.textContent
-    try{
-        await loadMessages(inboxUsername)
-    }catch(e){
-        //Something went wrong with the db
-    }
-    
+    await loadMessages(chatId)
+    localStorage.setItem('currentChatId', chatId)
 }
 
-async function loadMessages(inboxUsername){
-    //will eventually use a database to load messages from specific user
+async function loadMessages(chatId){
+    console.log('loadingMessages', chatId)
+    const currUser = localStorage.getItem('username')
+    //will eventually use a database to load messages from specific user using a chatId
     const parentEl = document.getElementById('messages-id')
     
     while(parentEl.firstChild){
         parentEl.removeChild(parentEl.firstChild)
     }
 
-    const currInboxMessages = JSON.parse(localStorage.getItem(inboxUsername))
+    const baseUrl = '/src/api/messages'
+    const queryParams = {
+        chat_id: chatId
+    }
+    const queryString = Object.keys(queryParams)
+        .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(queryParams[key]))
+        .join('&')
 
-    currInboxMessages.forEach((message) => {
-        //message from sender
-        if(message.username === inboxUsername){
+    const urlWithParams = baseUrl + '?' + queryString;
+    console.log(urlWithParams)
+    let messages = []
+    try{
+        const response = await fetch(urlWithParams)
+        messages = await response.json()
+        localStorage.setItem('messages', JSON.stringify(messages))
+    } catch {
+        messages = getLocalMessages(chatId)
+    }
+    console.log(messages)
+    messages.forEach((message) => {
+        //messages not from user
+        if(message.user !== currUser){
             const newMessageEl = document.createElement('p')
-            const firstName = inboxUsername.toString().split(' ')
-            newMessageEl.textContent = `${firstName[0]}: ${message.message}`
+            //This name will be gotten from the user once the database is implemented
+            const name = message.authorName
+            newMessageEl.textContent = `${name}: ${message.message}`
             parentEl.appendChild(newMessageEl)
         }
         //message from user
@@ -75,29 +110,3 @@ async function loadMessages(inboxUsername){
         }
     })
 }
-
-
-document.addEventListener('DOMContentLoaded', function() {
-    loadMessages('Alice Adams')
-    localStorage.setItem('currentInboxUsername', 'Alice Adams')
-
-    if(!localStorage.getItem('Alice Adams')){
-        //Populate local storage with placeholder messages
-        let aliceMessages = []
-        aliceMessages.push({username: 'Alice Adams', message: 'Hello there!', timestamp: Date.now()})
-        localStorage.setItem('Alice Adams', JSON.stringify(aliceMessages))
-    }
-    if(!localStorage.getItem('Bob Billy')){
-        //Populate local storage with placeholder messages
-        let bobMessages = []
-        bobMessages.push({username: 'Bob Billy', message: 'Can you help me with this job?', timestamp: Date.now()})
-        localStorage.setItem('Bob Billy', JSON.stringify(bobMessages))
-    }
-    if(!localStorage.getItem('Cat Cathy')){
-        //Populate local storage with placeholder messages
-        let catMessages = []
-        catMessages.push({username: 'Cat Cathy', message: 'What is your best price for this job?', timestamp: Date.now()})
-        localStorage.setItem('Cat Cathy', JSON.stringify(catMessages))
-    }
-
-});

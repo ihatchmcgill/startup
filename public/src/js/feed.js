@@ -1,6 +1,6 @@
-document.addEventListener('DOMContentLoaded', function() {
-    if (localStorage.getItem('userName')) {
-        const userName = localStorage.getItem('userName');
+document.addEventListener('DOMContentLoaded', async function() {
+    if (localStorage.getItem('username')) {
+        const userName = localStorage.getItem('username');
         const parent = document.getElementById('user-name')
 
         let nameHeading = document.createElement('h1')
@@ -8,27 +8,28 @@ document.addEventListener('DOMContentLoaded', function() {
 
         parent.appendChild(nameHeading)
     }
-    getFeedItems()
+    await getFeedItems()
 });
 
 
 async function getFeedItems(){
     const feedArea = document.getElementById('feed-area')
-    let listings
+    let listings = []
     try{
-        const response = await fetch('api/listings')
-        listings = response.json()
-    }catch(e){
+        const response = await fetch('/src/api/listings')
+        listings = await response.json()
+        localStorage.setItem('listings', JSON.stringify(listings))
+    }catch{
         listings = JSON.parse(localStorage.getItem('listings'))
-        throw new Error('unable to retrieve listings')
     }
     loadFeed(listings)
 }
 
 function loadFeed(listings){
     const feedArea = document.getElementById('feed-area')
-    
+    console.log('loading feed')
     listings.forEach((listing) => {
+        console.log(listing)
         const feedItem = document.createElement('div')
         feedItem.setAttribute('class', 'feed-item')
 

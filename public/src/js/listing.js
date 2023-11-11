@@ -23,7 +23,7 @@ async function createListing(){
     const listing = new Listing()
     
     //set attributes
-    listing.author = localStorage.getItem('userName')
+    listing.author = localStorage.getItem('username')
     listing.title = document.getElementById('title').value
     listing.availability = document.getElementById('availability').value
     listing.category = document.getElementById('category').value
@@ -39,15 +39,15 @@ async function createListing(){
 
 
 async function saveListing(listing){
-    let listings
     try {
-        const response = await fetch('/api/listing', {
+        const response = await fetch('/src/api/listing', {
           method: 'POST',
           headers: {'content-type': 'application/json'},
           body: JSON.stringify(listing),
         });
     }catch(e){
         //backend service failed, use local
+        let listings
         if(!localStorage.getItem('listings')){
             listings = []
         }

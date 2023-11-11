@@ -19,7 +19,7 @@ async function reply(buttonEl){
 
     const commentText = document.createElement('p')
     commentText.setAttribute('class', 'comment-text')
-    commentText.textContent = `${localStorage.getItem('userName')}: ${inputField.value}`
+    commentText.textContent = `${localStorage.getItem('username')}: ${inputField.value}`
 
     reviewComment.appendChild(commentText)
 
@@ -27,7 +27,7 @@ async function reply(buttonEl){
     reviewItemComments.appendChild(reviewComment)
 
     //store comment
-    const comment = {author: localStorage.getItem('userName'), description: inputField.value}
+    const comment = {author: localStorage.getItem('username'), description: inputField.value}
     if(reviewAuthor){
         try{
             await storeComment(comment, reviewAuthor)

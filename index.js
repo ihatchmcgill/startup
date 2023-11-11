@@ -12,7 +12,7 @@ app.use(express.static('public'));
 
 // Router for service endpoints
 const apiRouter = express.Router();
-app.use(`/api`, apiRouter);
+app.use('/src/api', apiRouter);
 
 
 // Placeholder for login endpoint
@@ -23,8 +23,7 @@ apiRouter.put('/login', (req, res) => {
 // Endpoint to get messages for a specific user
 apiRouter.get('/messages', (req, res) => {
   //get the chatId
-  const chatId = req.params.chat_id
-
+  const chatId = req.query.chat_id
   const messages = getMessages(chatId)
   res.send(messages)
 })
@@ -32,7 +31,7 @@ apiRouter.get('/messages', (req, res) => {
 // Endpoint to save a new message 
 apiRouter.post('/message', (req, res) => {
   const message = saveMessage(req.body)
-  res.send(message)
+  res.send(messages)
 });
 
 // Endpoint to get listings for a user
@@ -42,7 +41,7 @@ apiRouter.get('/listings', (req, res) => {
 
   //TODO: use username to lookup user in DB, pass user to getListings
 
-
+  console.log('getting all listings')
   //listings are stored in db and getListings filters them to be tailored to user
   const listings = getListings(username)
   res.send(listings)
@@ -50,6 +49,7 @@ apiRouter.get('/listings', (req, res) => {
 
 // Endpoint to create a new listing 
 apiRouter.post('/listing', (req, res) => {
+  console.log('creating listing...')
   const listing = saveListing(req.body)
   res.send(listing)
 });
@@ -70,7 +70,7 @@ apiRouter.post('/review', (req, res) => {
   const username = req.params.username
 
   //reviews are stored in the servicer table
-  const review = saveReview(username, req.body)
+  saveReview(username, req.body)
   res.send(review)
 })
 
@@ -86,30 +86,42 @@ app.listen(port, () => {
 
 //use a chatId to determine all messages within a chat
 let messages = []
-function getMessages(chatId){
+
+//input example messages
+messages.push({chatId: '1', user: 'alice_123', authorName: 'Alice Adams', message: 'Hello there!', timestamp: Date.now()})
+messages.push({chatId: '2', user: 'bbBoy2', authorName: 'Bob Billy', message: 'Can you help me with this job?', timestamp: Date.now()})
+messages.push({chatId: '3', user: 'meowcat4', authorName: 'Cat Cathy', message: 'What is your best price for this job?', timestamp: Date.now()})
+
+function getMessages(requestedChatId){
   let userMessages = []
-  for(message in messages){
-    if((message.chatId === chatId)){
+  messages.forEach(message => {
+    if((message.chatId === requestedChatId)){
       userMessages.push(message)
     }
-  }
+  })
+  console.log(userMessages)
   return userMessages
 }
 
 
 function saveMessage(message){
   messages.push(message)
+  return message
 }
 
 let listings = []
 function getListings(username){
-  //use specific information about the user to retrieve relavant listings
+  //use specific information about the user to retrieve listings
   //use db to implement this
+  //db table holds different listings with categories
+  console.log(listings)
   return listings;
 }
 
 function saveListing(listing){
   listings.push(listing)
+  console.log('listings pushed', listings)
+  return listing;
 }
 
 
@@ -119,6 +131,6 @@ function getReviews(username){
   return reviews
 }
 
-function saveReview(review){
-  reviews.push(review)
+function saveReview(username, review){
+  reviews.push({servicer: username, review: review})
 }
