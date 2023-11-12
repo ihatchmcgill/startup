@@ -148,6 +148,25 @@ async function loadReviews(reviews){
 }
 
 document.addEventListener('DOMContentLoaded', async function() {
+    //Init Map
+    const mapParentEl = document.getElementById('map')
+    const container = document.createElement('div');
+    container.setAttribute('id', 'map')
+
+    container.innerHTML = `
+      <iframe
+        width="75%"
+        height="200"
+        style="border:0"
+        loading="lazy"
+        allowfullscreen
+        referrerpolicy="no-referrer-when-downgrade"
+        src="https://www.google.com/maps/embed/v1/place?key=AIzaSyAnmKhBYlMKvrX8p1tth3F3VGfKKddvI6I&q=BYU+Creamery,Provo+UT">
+      </iframe>
+    `
+    mapParentEl.appendChild(container)
+
+
     let reviews = []
     try{
         const response = await fetch('/src/api/reviews')
