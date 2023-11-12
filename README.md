@@ -81,7 +81,7 @@ For this deliverable I implemented by JavaScript so that the application works f
 
 ## Service deliverable
 
-For this deliverable I added backend endpoints that receives votes and returns the voting totals.
+For this deliverable I added backend endpoints that handle creating listings, writing messages, and replying to reviews
 
 - **Node.js/Express HTTP service** - done!
 - **Static middleware for frontend** - done!
