@@ -79,3 +79,12 @@ For this deliverable I implemented by JavaScript so that the application works f
 - **WebSocket** - I implemented a way to send messages and switch between inboxes. This will be replaced with WebSocket messages later.
 - **application logic** - The application is much more complete now and users can interact with it in many different ways. This includes creating feed posts, replying to company reviews, and sending messages to other users.
 
+## Service deliverable
+
+For this deliverable I added backend endpoints that receives votes and returns the voting totals.
+
+- **Node.js/Express HTTP service** - done!
+- **Static middleware for frontend** - done!
+- **Calls to third party endpoints** - I call a google maps webservice to embed a map into the company page
+- **Backend service endpoints** - Placeholders for login that stores the current user on the server. Endpoints for messaging, creating listings, and replying to reviews
+- **Frontend calls service endpoints** - Replaced calls to localStorage to instead call backend endpoints
