@@ -31,7 +31,7 @@ async function createNewMessageEl(messageText){
     parentEl.appendChild(newMessageEl)
     const newMessage = {
         chatId: localStorage.getItem('currentChatId', '1'),
-        user: localStorage.getItem('username'),
+        authorUsername: localStorage.getItem('username'),
         //the user will be used to get the name from the db
         authorName: '(db placeholder)',
         message: messageText,
@@ -95,7 +95,7 @@ async function loadMessages(chatId){
     console.log(messages)
     messages.forEach((message) => {
         //messages not from user
-        if(message.user !== currUser){
+        if(message.authorUsername !== currUser){
             const newMessageEl = document.createElement('p')
             //This name will be gotten from the user once the database is implemented
             const name = message.authorName

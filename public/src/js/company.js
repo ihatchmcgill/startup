@@ -53,7 +53,18 @@ function getAuthorUser(description){
 async function storeComment(comment, reviewAuthor){
     let reviews = []
     try{
-        const response = await fetch('/src/api/reviews')
+        //GET endpoint for all reviews
+        const baseUrl = '/src/api/reviews'
+        const queryParams = {
+            username: localStorage.getItem('username')
+        }
+        const queryString = Object.keys(queryParams)
+            .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(queryParams[key]))
+            .join('&')
+
+        const urlWithParams = baseUrl + '?' + queryString;
+        const response = await fetch(urlWithParams)
+
         reviews = await response.json()
     } catch {
         reviews = JSON.parse(localStorage.getItem('reviews'))
@@ -62,10 +73,10 @@ async function storeComment(comment, reviewAuthor){
     reviews.some((review) =>  {
         if(review.authorName === reviewAuthor){
             review.comments.push(comment)
-            fetch('/src/api/updateReview', {
+            fetch('/src/api/updateReviewComment', {
                     method: 'POST',
                     headers: {'content-type': 'application/json'},
-                    body: JSON.stringify(review),
+                    body: JSON.stringify(review)
             }).then(response => {
                 return true
             }).catch(error =>{
@@ -114,7 +125,7 @@ async function loadReviews(reviews){
 
                 const commentText = document.createElement('p')
                 commentText.setAttribute('class', 'comment-text')
-                commentText.textContent = `${comment.user}: ${comment.description}`
+                commentText.textContent = `${comment.authorUsername}: ${comment.description}`
 
                 reviewComment.appendChild(commentText)
                 divReviewComments.appendChild(reviewComment)

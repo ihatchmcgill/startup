@@ -1,5 +1,7 @@
 const express = require('express');
 const app = express();
+const DB = require('./database.js');
+
 
 // The service port. In production the frontend code is statically hosted by the service on the same port.
 const port = process.argv.length > 2 ? process.argv[2] : 4000;
@@ -21,63 +23,65 @@ apiRouter.put('/login', (req, res) => {
 });
 
 // Endpoint to get messages for a specific user
-apiRouter.get('/messages', (req, res) => {
+apiRouter.get('/messages', async (req, res) => {
   //get the chatId
   const chatId = req.query.chat_id
-  const messages = getMessages(chatId)
+  const messages = await DB.getMessages(chatId)
   res.send(messages)
 })
 
 // Endpoint to save a new message 
-apiRouter.post('/message', (req, res) => {
-  const message = saveMessage(req.body)
-  res.send(messages)
+apiRouter.post('/message', async (req, res) => {
+  const result = await DB.saveMessage(req.body)
+  res.send(result)
 });
 
 // Endpoint to get listings for a user
-apiRouter.get('/listings', (req, res) => {
+apiRouter.get('/listings', async (req, res) => {
   //get the username
-  const username = req.params.username
+  const username = req.query.username
 
   //TODO: use username to lookup user in DB, pass user to getListings
+  //const user = await DB.getUser(username)
 
   console.log('getting all listings')
   //listings are stored in db and getListings filters them to be tailored to user
-  const listings = getListings(username)
+  const listings = await DB.getListings(username)
   res.send(listings)
 })
 
 // Endpoint to create a new listing 
-apiRouter.post('/listing', (req, res) => {
+apiRouter.post('/listing', async (req, res) => {
   console.log('creating listing...')
-  const listing = saveListing(req.body)
+  const listing = await DB.saveListing(req.body)
+  console.log('listing created')
   res.send(listing)
 });
 
 //Endpoint to get all the reviews for specific servicer
-apiRouter.get('/reviews', (req, res) => {
+apiRouter.get('/reviews', async (req, res) => {
   //get the username
-  const username = req.query.username
+  const servicerName = req.query.username
 
   //reviews are stored in the servicer table
-  const reviews = getReviews(username)
+  const reviews = await DB.getReviews(servicerName)
   res.send(reviews)
 })
 
 //Endpoint to save a new review
-apiRouter.post('/review', (req, res) => {
+apiRouter.post('/review', async (req, res) => {
   //get the username
-  const username = req.params.username
+  const servicerUsername = req.params.username
 
   //reviews are stored in the servicer table
-  const review = saveReview(username, req.body)
+  const review = await DB.saveReview(servicerUsername, req.body)
   res.send(review)
 })
 
-apiRouter.post('/updateReview', (req, res) => {
+apiRouter.post('/updateReview', async (req, res) => {
   //reviews are stored in the servicer table
-  const review = updateReview(req.body)
-  res.send(review)
+  const result = await DB.updateReviewComment(req.body)
+  res.send(result)
 })
 
 
@@ -96,9 +100,9 @@ app.listen(port, () => {
 let messages = []
 
 //input example messages
-messages.push({chatId: '1', user: 'alice_123', authorName: 'Alice Adams', message: 'Hello there!', timestamp: Date.now()})
-messages.push({chatId: '2', user: 'bbBoy2', authorName: 'Bob Billy', message: 'Can you help me with this job?', timestamp: Date.now()})
-messages.push({chatId: '3', user: 'meowcat4', authorName: 'Cat Cathy', message: 'What is your best price for this job?', timestamp: Date.now()})
+messages.push({chatId: '1', authorUsername: 'alice_123', authorName: 'Alice Adams', message: 'Hello there!', timestamp: Date.now()})
+messages.push({chatId: '2', authorUsername: 'bbBoy2', authorName: 'Bob Billy', message: 'Can you help me with this job?', timestamp: Date.now()})
+messages.push({chatId: '3', authorUsername: 'meowcat4', authorName: 'Cat Cathy', message: 'What is your best price for this job?', timestamp: Date.now()})
 
 function getMessages(requestedChatId){
   let userMessages = []
@@ -135,9 +139,9 @@ function saveListing(listing){
 
 let reviews = []
 
-reviews.push({rating: 5, user: 'alice_123', authorName: 'Alice Adams', servicer: 'Isaac', description: 'Love your work!', timestamp: Date.now(), comments: []})
-reviews.push({rating: 4, user: 'bbBoy2', authorName: 'Bob Billy', servicer: 'Isaac', description: 'Can\'t wait to work with you more in the future', timestamp: Date.now(), comments: []})
-reviews.push({rating: 1, user: 'meowcat4', authorName: 'Cat Cathy', servicer: 'Isaac', description: 'Difficult to contact and was slow to respond', timestamp: Date.now(), comments: []})
+reviews.push({reviewId: 0, rating: 5, authorUsername: 'alice_123', authorName: 'Alice Adams', serivcerUsername: 'Isaac', description: 'Love your work!', timestamp: Date.now(), comments: []})
+reviews.push({reviewId: 1, rating: 4, authorUsername: 'bbBoy2', authorName: 'Bob Billy', serivcerUsername: 'Isaac', description: 'Can\'t wait to work with you more in the future', timestamp: Date.now(), comments: []})
+reviews.push({reviewId: 2, rating: 1, authorUsername: 'meowcat4', authorName: 'Cat Cathy', serivcerUsername: 'Isaac', description: 'Difficult to contact and was slow to respond', timestamp: Date.now(), comments: []})
 
 function getReviews(username){
   //get specific reviews for user from db

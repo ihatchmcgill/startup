@@ -16,7 +16,17 @@ async function getFeedItems(){
     const feedArea = document.getElementById('feed-area')
     let listings = []
     try{
-        const response = await fetch('/src/api/listings')
+        const baseUrl = '/src/api/listings'
+        const queryParams = {
+            username: localStorage.getItem('username')
+        }
+        const queryString = Object.keys(queryParams)
+            .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(queryParams[key]))
+            .join('&')
+
+        const urlWithParams = baseUrl + '?' + queryString;
+        const response = await fetch(urlWithParams)
+        
         listings = await response.json()
         localStorage.setItem('listings', JSON.stringify(listings))
     }catch{
