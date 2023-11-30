@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const DB = require('./database.js');
+const DB = require('./database/database.js');
 
 
 // The service port. In production the frontend code is statically hosted by the service on the same port.
@@ -27,6 +27,7 @@ apiRouter.get('/messages', async (req, res) => {
   //get the chatId
   const chatId = req.query.chat_id
   const messages = await DB.getMessages(chatId)
+  console.log(messages)
   res.send(messages)
 })
 
