@@ -15,16 +15,26 @@ async function main() {
     
 
     let reviews = []
-    reviews.push({reviewId: 0, rating: 5, authorUsername: 'alice_123', authorName: 'Alice Adams', serivcerUsername: 'Isaac', description: 'Love your work!', timestamp: Date.now(), comments: []})
-    reviews.push({reviewId: 1, rating: 4, authorUsername: 'bbBoy2', authorName: 'Bob Billy', serivcerUsername: 'Isaac', description: 'Can\'t wait to work with you more in the future', timestamp: Date.now(), comments: []})
-    reviews.push({reviewId: 2, rating: 1, authorUsername: 'meowcat4', authorName: 'Cat Cathy', serivcerUsername: 'Isaac', description: 'Difficult to contact and was slow to respond', timestamp: Date.now(), comments: []})
-    
-    let servicerObj = {
-        servicer: 'Isaac',
-        reviews: reviews
+    reviews.push({reviewId: 0, rating: 5, authorUsername: 'alice_123', authorName: 'Alice Adams', servicerUserId: 123, servicerUsername: 'Isaac', description: 'Love your work!', timestamp: Date.now(), comments: []})
+    reviews.push({reviewId: 1, rating: 4, authorUsername: 'bbBoy2', authorName: 'Bob Billy', servicerUserId: 123, servicerUsername: 'Isaac', description: 'Can\'t wait to work with you more in the future', timestamp: Date.now(), comments: []})
+    reviews.push({reviewId: 2, rating: 1, authorUsername: 'meowcat4', authorName: 'Cat Cathy', servicerUserId: 123, servicerUsername: 'Isaac', description: 'Difficult to contact and was slow to respond', timestamp: Date.now(), comments: []})
+
+    await reviews.forEach(async review => {
+        await DB.saveReview(review)
+    });
+
+    const userObj = {
+        userId: 123,
+        firstName: 'Isaac',
+        lastName: 'McGill',
+        fullName: 'Isaac McGill',
+        username: 'Isaac',
+        password: 'test',
+        category: 'Agriculture',
+        servicerProvider: true
     }
 
-    await DB.createServicer(servicerObj)
+    await DB.createUser(userObj)
 }
 
 main().catch(console.error)

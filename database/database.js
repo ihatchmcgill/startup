@@ -15,7 +15,8 @@ const db = client.db('startup');
 
 const messageCollection = db.collection('message')
 const listingCollection = db.collection('listing')
-const servicerColleciton = db.collection('servicer')
+const userCollection = db.collection('user')
+const reviewCollection = db.collection('review')
 
 async function getMessages(requestedChatId){
   const userMessages = await messageCollection.find({chatId: requestedChatId}).toArray()
@@ -40,45 +41,49 @@ async function saveListing(listing){
   return result;
 }
 
-async function getReviews(servicerName){
-  const servicer = await servicerColleciton.find({servicerName: servicerName}).toArray()
-  return servicer[0].reviews
+//create a new servicer when a new user account is created
+async function createUser(userObj){
+  const result = await userCollection.insertOne(userObj)
+  return result;
 }
 
-//create a new servicer when a new user account is created
-async function createServicer(servicerObj){
-  const result = await servicerColleciton.insertOne(servicerObj)
-  return result;
+async function getReviews(servicerUsername){
+  console.log(servicerUsername)
+  try{
+    const reviews = await reviewCollection.find({servicerUsername: servicerUsername}).toArray()
+    console.log(reviews)
+    return reviews
+  }catch(e){
+    console.log(`Unable to find any reviews for ${servicerUsername}`)
+  }
+  
 }
 
 //adds a review to an existing servicer
-async function saveReview(servicerUsername, review){
+async function saveReview(review){
   //adds a new review to the document's reviews array
   console.log('saving review: \n', review)
-
-  const filter = {servicerName: servicerUsername}
-  const update = {$push: {reviews: review}}
-  const result = await servicerColleciton.updateOne(filter, update);
+  const result = await reviewCollection.insertOne(review);
   return result;
 }
 
-async function updateReviewComment(review){
-  const filter = {
-    servicerName: body.review.servicerUsername,
-    reviews: {
-      $elemMatch: {
-        reviewId: review.reviewId // Replace the old review with the new one.
+async function updateReviewComment(body){
+  console.log(body)
+  const updatedReview = body.review
+  const newComment = body.newComment
+
+    const filter = {
+      reviewId: updatedReview.reviewId
+    }
+    const update = {
+      $push: {
+        comments: newComment
       }
     }
-  }
-
-  var update = {
-    $set: { "reviews.$[elem]": review }
-  };
-  
-  //push item onto review's comment array
-  const result = await servicerColleciton.updateOne(filter, update);
-  return result;
+    //push item onto review's comment array
+    const result = await reviewCollection.updateOne(filter, update)
+    console.log('update review results: \n', result)
+    return result;
 }
 
-module.exports = { getMessages, saveMessage, getListings, saveListing, getReviews, createServicer, saveReview, updateReviewComment};
+module.exports = { getMessages, saveMessage, getListings, saveListing, getReviews, createUser, saveReview, updateReviewComment};

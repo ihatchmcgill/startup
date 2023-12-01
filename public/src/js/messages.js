@@ -33,7 +33,7 @@ async function createNewMessageEl(messageText){
         chatId: localStorage.getItem('currentChatId', '1'),
         authorUsername: localStorage.getItem('username'),
         //the user will be used to get the name from the db
-        authorName: '(db placeholder)',
+        authorName: 'TODO: implement a db lookup based on username',
         message: messageText,
         timestamp: Date.now()
     }

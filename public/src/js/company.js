@@ -27,7 +27,7 @@ async function reply(buttonEl){
     reviewItemComments.appendChild(reviewComment)
 
     //store comment
-    const comment = {user: localStorage.getItem('username'), description: inputField.value}
+    const comment = {commentAuthorUsername: localStorage.getItem('username'), description: inputField.value}
     if(reviewAuthor){
         try{
             await storeComment(comment, reviewAuthor)
@@ -76,7 +76,11 @@ async function storeComment(comment, reviewAuthor){
             fetch('/src/api/updateReviewComment', {
                     method: 'POST',
                     headers: {'content-type': 'application/json'},
-                    body: JSON.stringify(review)
+                    body: JSON.stringify(
+                        { 
+                        review: review,
+                        newComment: comment
+                    })
             }).then(response => {
                 return true
             }).catch(error =>{
@@ -125,7 +129,7 @@ async function loadReviews(reviews){
 
                 const commentText = document.createElement('p')
                 commentText.setAttribute('class', 'comment-text')
-                commentText.textContent = `${comment.authorUsername}: ${comment.description}`
+                commentText.textContent = `${comment.commentAuthorUsername}: ${comment.description}`
 
                 reviewComment.appendChild(commentText)
                 divReviewComments.appendChild(reviewComment)
@@ -146,7 +150,7 @@ async function loadReviews(reviews){
         sendButton.setAttribute('class', 'send-button')
         sendButton.setAttribute('id', `send-button${i}`)
         sendButton.setAttribute('onclick', 'reply(this)')
-        sendButton.textContent = 'Send'
+        sendButton.textContent = 'Reply'
 
         divReviewControls.appendChild(inputField)
         divReviewControls.appendChild(sendButton)
@@ -180,7 +184,17 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     let reviews = []
     try{
-        const response = await fetch('/src/api/reviews')
+        const baseUrl = '/src/api/reviews'
+        const queryParams = {
+            username: localStorage.getItem('username')
+        }
+        const queryString = Object.keys(queryParams)
+            .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(queryParams[key]))
+            .join('&')
+
+        const urlWithParams = baseUrl + '?' + queryString;
+        const response = await fetch(urlWithParams)
+
         reviews = await response.json()
         localStorage.setItem('reviews', JSON.stringify(reviews))
     } catch {

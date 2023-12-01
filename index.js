@@ -74,12 +74,12 @@ apiRouter.post('/review', async (req, res) => {
   //get the username
   const servicerUsername = req.params.username
 
-  //reviews are stored in the servicer table
-  const review = await DB.saveReview(servicerUsername, req.body)
+  const review = await DB.saveReview(req.body)
   res.send(review)
 })
 
-apiRouter.post('/updateReview', async (req, res) => {
+apiRouter.post('/updateReviewComment', async (req, res) => {
+  console.log('adding review comment')
   //reviews are stored in the servicer table
   const result = await DB.updateReviewComment(req.body)
   res.send(result)
