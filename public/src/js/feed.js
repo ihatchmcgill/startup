@@ -39,11 +39,12 @@ async function getFeedItems(){
 }
 
 async function loadFeed(listings){
+    const user = JSON.parse(localStorage.getItem('currUser'))
     const feedArea = document.getElementById('feed-area')
     console.log('loading feed')
 
     for(const listing of listings) {
-        let user = await getUser(listing.authorUsername)
+        let listingUser = await getUser(listing.authorUsername)
         if(listing.category === user.category){
             const feedItem = document.createElement('div')
             feedItem.setAttribute('class', 'feed-item')
@@ -67,7 +68,7 @@ async function loadFeed(listings){
 
             const itemDescriptionAuthor = document.createElement('div')
             itemDescriptionAuthor.setAttribute('class', 'description')
-            itemDescriptionAuthor.textContent = `Author: ${user.firstName}`
+            itemDescriptionAuthor.textContent = `Author: ${listingUser.firstName}`
 
 
             const contactBtn = document.createElement('button')

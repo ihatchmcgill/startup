@@ -120,6 +120,7 @@ secureApiRouter.get('/listings', async (req, res) => {
   console.log('getting all listings')
   //listings are stored in db and getListings filters them to be tailored to user
   const listings = await DB.getListings(category)
+  console.log(listings)
   res.send(listings)
 })
 
