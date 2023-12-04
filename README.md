@@ -96,3 +96,12 @@ For this deliverable I stored the data for users, listings, reviews, and message
 - **MongoDB Atlas database created** - done!
 - **Endpoints for data** - Service endpoints now call database functions and create a connection to read information from the db to send as responses.
 - **Stores data in MongoDB** - done!
+
+## Login deliverable
+
+For this deliverable I associate listings, messages, and reviews with specific users.
+
+- **User registration** - Creates a new account in the database.
+- **existing user** - Stores data under the same user if the user already exists.
+- **Use MongoDB to store credentials** - Stores both user and their data.
+- **Restricts functionality** - You cannot use the application until an account is created
