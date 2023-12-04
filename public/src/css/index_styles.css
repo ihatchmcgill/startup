@@ -37,6 +37,7 @@ nav li:hover {
 }
 
 .container {
+    color: #26F0F1;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -49,11 +50,8 @@ nav li:hover {
     list-style-type: none;
 }
 
-form{
-    color: #26F0F1;
-}
 
-form input {
+.container ul li input {
     width: 100%;
     padding: 10px;
     margin-bottom: 10px;
@@ -61,7 +59,7 @@ form input {
     border-radius: 5px;
 }
   
-form button {
+.container button {
     padding: 10px;
     border: none;
     border-radius: 5px;
@@ -71,6 +69,6 @@ form button {
     margin:0px;
 }
   
-form button:hover {
+.container button:hover {
     background-color: #2980b9;
 }

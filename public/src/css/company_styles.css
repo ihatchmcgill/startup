@@ -107,6 +107,10 @@ nav menu li a:hover {
     margin-left: 5%;
 }
 
+#review-author {
+    color: #0000FF
+}
+
 footer {
     background-color: #C4EBC8;
     text-align: center;

@@ -21,9 +21,9 @@ class Listing {
 
 async function createListing(){
     const listing = new Listing()
-    
+    const user = JSON.parse(localStorage.getItem('currUser'))
     //set attributes
-    listing.author = localStorage.getItem('username')
+    listing.authorUsername = user.username
     listing.title = document.getElementById('title').value
     listing.availability = document.getElementById('availability').value
     listing.category = document.getElementById('category').value

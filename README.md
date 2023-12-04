@@ -88,3 +88,11 @@ For this deliverable I added backend endpoints that handle creating listings, wr
 - **Calls to third party endpoints** - I call a google maps webservice to embed a map into the company page
 - **Backend service endpoints** - Placeholders for login that stores the current user on the server. Endpoints for messaging, creating listings, and replying to reviews
 - **Frontend calls service endpoints** - Replaced calls to localStorage to instead call backend endpoints
+
+## DB deliverable
+
+For this deliverable I stored the data for users, listings, reviews, and messages in the database.
+
+- **MongoDB Atlas database created** - done!
+- **Endpoints for data** - Service endpoints now call database functions and create a connection to read information from the db to send as responses.
+- **Stores data in MongoDB** - done!

@@ -1,4 +1,5 @@
 async function reply(buttonEl){
+    const user = JSON.parse(localStorage.getItem('currUser'))
 
     //get index of particular reply
     let reviewIndex = buttonEl.id.match(/\d+?/)
@@ -6,8 +7,8 @@ async function reply(buttonEl){
     
     const parentEl = document.getElementById(`review-item${reviewIndex}`)
     const inputField = parentEl.querySelector('.review-response')
-    const description = parentEl.querySelector('.review-description')
-    const reviewAuthor = getAuthorUser(description.textContent)
+    const reviewAuthor = parentEl.querySelector('#review-author').textContent
+    console.log(reviewAuthor)
     //don't create elements without input text
     if(!inputField.value){
         return
@@ -19,7 +20,7 @@ async function reply(buttonEl){
 
     const commentText = document.createElement('p')
     commentText.setAttribute('class', 'comment-text')
-    commentText.textContent = `${localStorage.getItem('username')}: ${inputField.value}`
+    commentText.textContent = `${user.username}: ${inputField.value}`
 
     reviewComment.appendChild(commentText)
 
@@ -27,36 +28,30 @@ async function reply(buttonEl){
     reviewItemComments.appendChild(reviewComment)
 
     //store comment
-    const comment = {commentAuthorUsername: localStorage.getItem('username'), description: inputField.value}
-    if(reviewAuthor){
-        try{
-            await storeComment(comment, reviewAuthor)
-        }catch{
-            //failed to save comment
-        }
-    }
+    const comment = {commentAuthorUsername: user.username, description: inputField.value}
 
+
+    try{
+        await storeComment(comment, reviewAuthor)
+    }catch(e){
+        //failed to save comment
+        console.log(e)
+    }
+    
     //clear input field
     inputField.value = ''
 }
 
-function getAuthorUser(description){
-    const index = description.indexOf(':')
-    if (index !== -1) {
-        return description.substring(0, index);
-      } else {
-        // Character not found, return the original string
-        return null;
-    }
-}
 
-async function storeComment(comment, reviewAuthor){
+async function storeComment(comment, reviewAuthorUsername ){
+    const user = JSON.parse(localStorage.getItem('currUser'))
+
     let reviews = []
     try{
         //GET endpoint for all reviews
         const baseUrl = '/src/api/reviews'
         const queryParams = {
-            username: localStorage.getItem('username')
+            username: user.username
         }
         const queryString = Object.keys(queryParams)
             .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(queryParams[key]))
@@ -65,15 +60,23 @@ async function storeComment(comment, reviewAuthor){
         const urlWithParams = baseUrl + '?' + queryString;
         const response = await fetch(urlWithParams)
 
-        reviews = await response.json()
-    } catch {
+        if(response.ok){
+            reviews = await response.json()
+        }
+    } catch(e) {
+        console.log(e)
         reviews = JSON.parse(localStorage.getItem('reviews'))
     }
 
-    reviews.some((review) =>  {
-        if(review.authorName === reviewAuthor){
+    console.log('storing comment')
+
+    for(const review of reviews)  {
+        console.log('searching for:', reviewAuthorUsername)
+        console.log('checking review:', review.authorUsername)
+        if(review.authorUsername === reviewAuthorUsername){
+            console.log('found correct review')
             review.comments.push(comment)
-            fetch('/src/api/updateReviewComment', {
+            await fetch('/src/api/updateReviewComment', {
                     method: 'POST',
                     headers: {'content-type': 'application/json'},
                     body: JSON.stringify(
@@ -89,7 +92,8 @@ async function storeComment(comment, reviewAuthor){
             })
 
         }
-    })
+        return false
+    }
 }
 
 
@@ -109,12 +113,19 @@ async function loadReviews(reviews){
         textReviewStars.textContent = `${review.rating} Stars`
 
         //review description
+        const divReviewAuth = document.createElement('div')
+        divReviewAuth.setAttribute('id', 'review-author')
+        divReviewAuth.setAttribute('class', 'review-description-author')
+        divReviewAuth.textContent = `${review.authorUsername}`
+
+        //review description
         const divReviewDesc = document.createElement('div')
         divReviewDesc.setAttribute('class', 'review-description')
-        divReviewDesc.textContent = `${review.authorName}: ${review.description}`
+        divReviewDesc.textContent = `${review.description}`
 
         //appending children to parent list
         divReviewItem.appendChild(textReviewStars)
+        divReviewItem.appendChild(divReviewAuth)
         divReviewItem.appendChild(divReviewDesc)
 
         //iterate through review comments and create elements for those
@@ -162,6 +173,26 @@ async function loadReviews(reviews){
     })
 }
 
+async function getUser(username){
+    const baseUrl = '/src/api/user'
+    const queryParams = {
+        username: username
+    }
+    const queryString = Object.keys(queryParams)
+        .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(queryParams[key]))
+        .join('&')
+
+    const urlWithParams = baseUrl + '?' + queryString;
+    try{
+        const response = await fetch(urlWithParams)
+        user = await response.json()
+        return user
+    } catch(e){
+        console.log(e)
+        return false;
+    }
+}
+
 document.addEventListener('DOMContentLoaded', async function() {
     //Init Map
     const mapParentEl = document.getElementById('map')
@@ -181,12 +212,13 @@ document.addEventListener('DOMContentLoaded', async function() {
     `
     mapParentEl.appendChild(container)
 
+    const user = JSON.parse(localStorage.getItem('currUser'))
 
     let reviews = []
     try{
         const baseUrl = '/src/api/reviews'
         const queryParams = {
-            username: localStorage.getItem('username')
+            username: user.username
         }
         const queryString = Object.keys(queryParams)
             .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(queryParams[key]))
@@ -194,10 +226,12 @@ document.addEventListener('DOMContentLoaded', async function() {
 
         const urlWithParams = baseUrl + '?' + queryString;
         const response = await fetch(urlWithParams)
-
-        reviews = await response.json()
-        localStorage.setItem('reviews', JSON.stringify(reviews))
-    } catch {
+        if(response.ok){
+            reviews = await response.json()
+            localStorage.setItem('reviews', JSON.stringify(reviews))
+        }
+    } catch(e){
+        console.log(e)
         reviews = localStorage.getItem('reviews')
     }
     await loadReviews(reviews)

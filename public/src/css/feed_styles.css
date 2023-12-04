@@ -121,12 +121,25 @@ nav menu li a:hover {
     font-weight: bold;
     border: 1px solid black;
     padding: 10px;
-    
 }
 
 .feed-item img {
     max-width: 100%;
     height: auto;
+}
+
+.feed-item button{
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #3498db;
+    color: white;
+    cursor: pointer;
+    margin:0px;
+}
+
+.feed-item button:hover {
+    background-color: #2980b9;
 }
 
 .description {

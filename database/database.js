@@ -1,4 +1,6 @@
 const { MongoClient } = require('mongodb');
+const bcrypt = require('bcrypt');
+const uuid = require('uuid');
 const config = require('./dbConfig.json')
 
 const url = `mongodb+srv://${config.userName}:${config.password}@${config.hostname}`
@@ -17,22 +19,86 @@ const messageCollection = db.collection('message')
 const listingCollection = db.collection('listing')
 const userCollection = db.collection('user')
 const reviewCollection = db.collection('review')
+const chatCollection = db.collection('chat')
+
+async function getUser(username) {
+  return await userCollection.findOne({username: username});
+}
+
+function getUserByToken(token) {
+  return userCollection.findOne({ token: token });
+}
+
+async function createUser(request) {
+  // Hash the password before we insert it into the database
+  const passwordHash = await bcrypt.hash(request.password, 10);
+  const user = {
+    userId: uuid.v4(),
+    username: request.username,
+    password: passwordHash,
+    token: uuid.v4(),
+    firstName: request.firstName,
+    lastName: request.lastName,
+    fullName: `${request.firstName} ${request.lastName}`,
+    serviceProvider: request.serviceProvider,
+    category: request.category
+  };
+
+  await userCollection.insertOne(user);
+  return user;
+}
+
 
 async function getMessages(requestedChatId){
-  const userMessages = await messageCollection.find({chatId: requestedChatId}).toArray()
+  const sortCriteria = { timestamp: 1 }
+  const userMessages = await messageCollection.find({chatId: requestedChatId}).sort(sortCriteria).toArray()
   return userMessages
 }
 
 async function saveMessage(message){
   console.log('saving message: \n', message)
-  const result = await messageCollection.insertOne(message);
+  const newMessage = {
+    messageId: uuid.v4(), 
+    chatId: message.chatId,
+    authorUsername: message.authorUsername, 
+    recipientUsername: message.recipientUsername, 
+    message: message.message, 
+    timestamp: Date.now()
+  }
+  const result = await messageCollection.insertOne(newMessage);
   return result
 }
 
-async function getListings(user){
-  //const listings = listingCollection.find({category: user.category}).toArray()
+async function getChats(username){
+  const query ={
+    $or: [
+      { username1: username },
+      { username2: username }
+    ]
+  }
+  const result = await chatCollection.find(query).toArray()
+  return result
+}
 
-  const listings = await listingCollection.find().toArray()
+
+async function getChat(chatId){
+  const result = await chatCollection.find({chatId: chatId}).toArray()
+  return result[0]
+}
+
+async function saveChat(chat){
+  const result = await chatCollection.insertOne(chat)
+  return result
+}
+
+async function getListings(category){
+  let listings
+  if(category === 'None'){
+    listings = await listingCollection.find().toArray()
+  }
+  else{
+    listings = listingCollection.find({category: category}).toArray()
+  }
   return listings
 }
 
@@ -41,17 +107,10 @@ async function saveListing(listing){
   return result;
 }
 
-//create a new servicer when a new user account is created
-async function createUser(userObj){
-  const result = await userCollection.insertOne(userObj)
-  return result;
-}
 
 async function getReviews(servicerUsername){
-  console.log(servicerUsername)
   try{
     const reviews = await reviewCollection.find({servicerUsername: servicerUsername}).toArray()
-    console.log(reviews)
     return reviews
   }catch(e){
     console.log(`Unable to find any reviews for ${servicerUsername}`)
@@ -86,4 +145,4 @@ async function updateReviewComment(body){
     return result;
 }
 
-module.exports = { getMessages, saveMessage, getListings, saveListing, getReviews, createUser, saveReview, updateReviewComment};
+module.exports = { getUser, getUserByToken, createUser, getMessages, saveMessage, saveChat, getChat, getChats, getListings, saveListing, getReviews, saveReview, updateReviewComment};

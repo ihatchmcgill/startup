@@ -1,10 +1,10 @@
 document.addEventListener('DOMContentLoaded', async function() {
-    if (localStorage.getItem('username')) {
-        const userName = localStorage.getItem('username');
+    if (localStorage.getItem('currUser')) {
+        const user = JSON.parse(localStorage.getItem('currUser'))
         const parent = document.getElementById('user-name')
 
         let nameHeading = document.createElement('h1')
-        nameHeading.textContent = `Welcome back ${userName}`
+        nameHeading.textContent = `Welcome back ${user.firstName}`
 
         parent.appendChild(nameHeading)
     }
@@ -14,11 +14,12 @@ document.addEventListener('DOMContentLoaded', async function() {
 
 async function getFeedItems(){
     const feedArea = document.getElementById('feed-area')
+    const user = JSON.parse(localStorage.getItem('currUser'))
     let listings = []
     try{
         const baseUrl = '/src/api/listings'
         const queryParams = {
-            username: localStorage.getItem('username')
+            category: user.category
         }
         const queryString = Object.keys(queryParams)
             .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(queryParams[key]))
@@ -27,39 +28,79 @@ async function getFeedItems(){
         const urlWithParams = baseUrl + '?' + queryString;
         const response = await fetch(urlWithParams)
         
-        listings = await response.json()
-        localStorage.setItem('listings', JSON.stringify(listings))
+        if(response.ok){
+            listings = await response.json()
+            localStorage.setItem('listings', JSON.stringify(listings))
+        }
     }catch{
         listings = JSON.parse(localStorage.getItem('listings'))
     }
-    loadFeed(listings)
+    await loadFeed(listings)
 }
 
-function loadFeed(listings){
+async function loadFeed(listings){
     const feedArea = document.getElementById('feed-area')
     console.log('loading feed')
-    listings.forEach((listing) => {
-        console.log(listing)
-        const feedItem = document.createElement('div')
-        feedItem.setAttribute('class', 'feed-item')
 
-        const itemTitle = document.createElement('p')
-        itemTitle.textContent = `${listing.author}\'s Post`
+    for(const listing of listings) {
+        let user = await getUser(listing.authorUsername)
+        if(listing.category === user.category){
+            const feedItem = document.createElement('div')
+            feedItem.setAttribute('class', 'feed-item')
 
-        const itemImg = document.createElement('img')
-        itemImg.setAttribute('alt', 'listing image')
-        itemImg.setAttribute('width', '100')
-        itemImg.setAttribute('height', '100')
-        itemImg.setAttribute('src', 'https://media.istockphoto.com/id/1291262112/photo/banana.webp?b=1&s=170667a&w=0&k=20&c=pPSsFoR1CX7oHJrr-bZPSoFIBO8PPf4SQDg3IbF-wcg=')
-        
-        const itemDescription = document.createElement('div')
-        itemDescription.setAttribute('class', 'description')
-        itemDescription.textContent = `Title: ${listing.title} Category: ${listing.category} Budget: ${listing.budget}`
+            const itemTitle = document.createElement('p')
+            itemTitle.textContent = `${listing.title}`
 
-        feedItem.appendChild(itemTitle)
-        feedItem.appendChild(itemImg)
-        feedItem.appendChild(itemDescription)
+            const itemImg = document.createElement('img')
+            itemImg.setAttribute('alt', 'listing image')
+            itemImg.setAttribute('width', '100')
+            itemImg.setAttribute('height', '100')
+            itemImg.setAttribute('src', 'https://media.istockphoto.com/id/1291262112/photo/banana.webp?b=1&s=170667a&w=0&k=20&c=pPSsFoR1CX7oHJrr-bZPSoFIBO8PPf4SQDg3IbF-wcg=')
+            
+            const itemDescriptionCategory = document.createElement('div')
+            itemDescriptionCategory.setAttribute('class', 'description')
+            itemDescriptionCategory.textContent = `Category: ${listing.category}`
 
-        feedArea.appendChild(feedItem)
-    })
+            const itemDescriptionBudget = document.createElement('div')
+            itemDescriptionBudget.setAttribute('class', 'description')
+            itemDescriptionBudget.textContent = `Budget: ${listing.budget}`
+
+            const itemDescriptionAuthor = document.createElement('div')
+            itemDescriptionAuthor.setAttribute('class', 'description')
+            itemDescriptionAuthor.textContent = `Author: ${user.firstName}`
+
+
+            const contactBtn = document.createElement('button')
+            contactBtn.textContent = 'Contact Client'
+
+            feedItem.appendChild(itemTitle)
+            feedItem.appendChild(itemImg)
+            feedItem.appendChild(itemDescriptionCategory)
+            feedItem.appendChild(itemDescriptionBudget)
+            feedItem.appendChild(itemDescriptionAuthor)
+            feedItem.appendChild(contactBtn)
+
+            feedArea.appendChild(feedItem)
+        }
+    }
+}
+
+async function getUser(username){
+    const baseUrl = '/src/api/user'
+    const queryParams = {
+        username: username
+    }
+    const queryString = Object.keys(queryParams)
+        .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(queryParams[key]))
+        .join('&')
+
+    const urlWithParams = baseUrl + '?' + queryString;
+    try{
+        const response = await fetch(urlWithParams)
+        user = await response.json()
+        return user
+    } catch(e){
+        console.log(e)
+        return false;
+    }
 }

@@ -1,7 +1,10 @@
+const cookieParser = require('cookie-parser');
+const bcrypt = require('bcrypt');
 const express = require('express');
 const app = express();
 const DB = require('./database/database.js');
 
+const authCookieName = 'token';
 
 // The service port. In production the frontend code is statically hosted by the service on the same port.
 const port = process.argv.length > 2 ? process.argv[2] : 4000;
@@ -9,50 +12,119 @@ const port = process.argv.length > 2 ? process.argv[2] : 4000;
 // JSON body parsing using built-in middleware
 app.use(express.json());
 
+// Use the cookie parser middleware for tracking authentication tokens
+app.use(cookieParser());
+
 // Serve up the frontend static content hosting
 app.use(express.static('public'));
+
+// Trust headers that are forwarded from the proxy so we can determine IP addresses
+app.set('trust proxy', true);
 
 // Router for service endpoints
 const apiRouter = express.Router();
 app.use('/src/api', apiRouter);
 
-
-// Placeholder for login endpoint
-apiRouter.put('/login', (req, res) => {
-  
+//Create a new User
+apiRouter.post('/createAccount', async (req, res) => {
+  if (await DB.getUser(req.body.username)) {
+    res.status(409).send({ msg: 'Existing user' });
+  } else {
+    const user = await DB.createUser(req.body);
+    // Set the cookie
+    setAuthCookie(res, user.token);
+    res.send({
+      id: user.userId,
+    });
+  }
 });
 
-// Endpoint to get messages for a specific user
-apiRouter.get('/messages', async (req, res) => {
+apiRouter.post('/login', async (req, res) => {
+  const user = await DB.getUser(req.body.username);
+  if (user) {
+    if (await bcrypt.compare(req.body.password, user.password)) {
+      //Check authToken table for an existing authToken
+      setAuthCookie(res, user.token);
+      res.send(user);
+    }
+  }else{
+    res.status(401).send({ msg: 'Unauthorized' });
+  }
+});
+
+// DeleteAuth token if stored in cookie
+apiRouter.delete('/logout', (_req, res) => {
+  res.clearCookie(authCookieName);
+  res.status(204).end();
+});
+
+// secureApiRouter verifies credentials for endpoints
+const secureApiRouter = express.Router();
+apiRouter.use(secureApiRouter);
+
+secureApiRouter.use(async (req, res, next) => {
+  authToken = req.cookies[authCookieName];
+  const user = await DB.getUserByToken(authToken);
+  if (user) {
+    next();
+  } else {
+    res.status(401).send({ msg: 'Unauthorized' });
+  }
+});
+
+// Endpoint to get user
+secureApiRouter.get('/user', async (req, res) => {
   //get the chatId
-  const chatId = req.query.chat_id
+  const username = req.query.username
+  const user = await DB.getUser(username)
+  res.send(user)
+})
+
+secureApiRouter.get('/chats', async (req, res) => {
+  //get the chatId
+  const username = req.query.username
+  const chats = await DB.getChats(username)
+  res.send(chats)
+})
+
+secureApiRouter.get('/chat', async (req, res) => {
+  //get the chatId
+  const chatId = req.query.chatId
+  const chats = await DB.getChat(chatId)
+  res.send(chats)
+})
+
+// Endpoint to get messages for a specific user
+secureApiRouter.get('/messages', async (req, res) => {
+  //get the chatId
+  const chatId = req.query.chatId
   const messages = await DB.getMessages(chatId)
   console.log(messages)
   res.send(messages)
 })
 
 // Endpoint to save a new message 
-apiRouter.post('/message', async (req, res) => {
+secureApiRouter.post('/message', async (req, res) => {
   const result = await DB.saveMessage(req.body)
   res.send(result)
 });
 
 // Endpoint to get listings for a user
-apiRouter.get('/listings', async (req, res) => {
+secureApiRouter.get('/listings', async (req, res) => {
   //get the username
-  const username = req.query.username
+  const category = req.query.category
 
   //TODO: use username to lookup user in DB, pass user to getListings
   //const user = await DB.getUser(username)
 
   console.log('getting all listings')
   //listings are stored in db and getListings filters them to be tailored to user
-  const listings = await DB.getListings(username)
+  const listings = await DB.getListings(category)
   res.send(listings)
 })
 
 // Endpoint to create a new listing 
-apiRouter.post('/listing', async (req, res) => {
+secureApiRouter.post('/listing', async (req, res) => {
   console.log('creating listing...')
   const listing = await DB.saveListing(req.body)
   console.log('listing created')
@@ -60,7 +132,7 @@ apiRouter.post('/listing', async (req, res) => {
 });
 
 //Endpoint to get all the reviews for specific servicer
-apiRouter.get('/reviews', async (req, res) => {
+secureApiRouter.get('/reviews', async (req, res) => {
   //get the username
   const servicerName = req.query.username
 
@@ -70,7 +142,7 @@ apiRouter.get('/reviews', async (req, res) => {
 })
 
 //Endpoint to save a new review
-apiRouter.post('/review', async (req, res) => {
+secureApiRouter.post('/review', async (req, res) => {
   //get the username
   const servicerUsername = req.params.username
 
@@ -78,13 +150,17 @@ apiRouter.post('/review', async (req, res) => {
   res.send(review)
 })
 
-apiRouter.post('/updateReviewComment', async (req, res) => {
+secureApiRouter.post('/updateReviewComment', async (req, res) => {
   console.log('adding review comment')
   //reviews are stored in the servicer table
   const result = await DB.updateReviewComment(req.body)
   res.send(result)
 })
 
+// Default error handler
+app.use(function (err, req, res, next) {
+  res.status(500).send({ type: err.name, message: err.message });
+});
 
 
 // Return the application's default page if the path is unknown
@@ -92,75 +168,14 @@ app.use((_req, res) => {
   res.sendFile('index.html', { root: 'public' });
 });
 
+function setAuthCookie(res, authToken) {
+  res.cookie(authCookieName, authToken, {
+    secure: true,
+    httpOnly: true,
+    sameSite: 'strict',
+  });
+}
+
 app.listen(port, () => {
   console.log(`Listening on port ${port}`);
 });
-
-
-//use a chatId to determine all messages within a chat
-let messages = []
-
-//input example messages
-messages.push({chatId: '1', authorUsername: 'alice_123', authorName: 'Alice Adams', message: 'Hello there!', timestamp: Date.now()})
-messages.push({chatId: '2', authorUsername: 'bbBoy2', authorName: 'Bob Billy', message: 'Can you help me with this job?', timestamp: Date.now()})
-messages.push({chatId: '3', authorUsername: 'meowcat4', authorName: 'Cat Cathy', message: 'What is your best price for this job?', timestamp: Date.now()})
-
-function getMessages(requestedChatId){
-  let userMessages = []
-  messages.forEach(message => {
-    if((message.chatId === requestedChatId)){
-      userMessages.push(message)
-    }
-  })
-  console.log(userMessages)
-  return userMessages
-}
-
-
-function saveMessage(message){
-  messages.push(message)
-  return message
-}
-
-let listings = []
-function getListings(username){
-  //use specific information about the user to retrieve listings
-  //use db to implement this
-  //db table holds different listings with categories
-  console.log(listings)
-  return listings;
-}
-
-function saveListing(listing){
-  listings.push(listing)
-  console.log('listings pushed', listings)
-  return listing;
-}
-
-
-let reviews = []
-
-reviews.push({reviewId: 0, rating: 5, authorUsername: 'alice_123', authorName: 'Alice Adams', serivcerUsername: 'Isaac', description: 'Love your work!', timestamp: Date.now(), comments: []})
-reviews.push({reviewId: 1, rating: 4, authorUsername: 'bbBoy2', authorName: 'Bob Billy', serivcerUsername: 'Isaac', description: 'Can\'t wait to work with you more in the future', timestamp: Date.now(), comments: []})
-reviews.push({reviewId: 2, rating: 1, authorUsername: 'meowcat4', authorName: 'Cat Cathy', serivcerUsername: 'Isaac', description: 'Difficult to contact and was slow to respond', timestamp: Date.now(), comments: []})
-
-function getReviews(username){
-  //get specific reviews for user from db
-  return reviews
-}
-
-function saveReview(username, review){
-  reviews.push({servicer: username, review: review})
-  return review
-}
-
-function updateReview(updatedReview){
-  console.log(reviews)
-  console.log(updatedReview)
-  const index = reviews.findIndex(review => review.authorName === updatedReview.authorName);
-
-  if (index !== -1) {
-    // Found a matching review, update it
-    reviews.splice(index, 1, updatedReview);
-  }
-}

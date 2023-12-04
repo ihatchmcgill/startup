@@ -83,3 +83,17 @@ footer {
 footer a:hover {
     color: #86A5D9;
 }
+
+#edit-btn {
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #3498db;
+    color: white;
+    cursor: pointer;
+    margin:0px;
+}
+  
+#edit-btn:hover {
+    background-color: #2980b9;
+}
