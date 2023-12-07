@@ -22,10 +22,12 @@ function peerProxy(server){
         
         // Forward message to every connection containing the same chatId
         ws.on('message', function message(data) {
+            console.log(data)
             connections.forEach((c) => {
                 if (c.id !== connection.id) {
                     if(c.chatId === connection.chatId){
                         c.ws.send(data);
+                        console.log('data sent to ws!')
                     }
                 }
             });
@@ -37,6 +39,7 @@ function peerProxy(server){
             connections.findIndex((o, i) => {
                 if (o.id === connection.id) {
                 connections.splice(i, 1);
+                console.log('closed: ', o.chatId)
                 return true;
                 }
             });

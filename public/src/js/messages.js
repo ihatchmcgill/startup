@@ -104,17 +104,17 @@ async function displayMessageArr(parentEl, user, messages){
     for (const message of messages) {
         // Messages not from the user
         if (message.authorUsername !== user.username) {
-        const newMessageEl = document.createElement('p');
-        const user2 = await getUser(message.authorUsername);
-        const name = user2.firstName;
-        newMessageEl.textContent = `${name}: ${message.message}`;
-        parentEl.appendChild(newMessageEl);
+            const newMessageEl = document.createElement('p');
+            const user2 = await getUser(message.authorUsername);
+            const name = user2.firstName;
+            newMessageEl.textContent = `${name}: ${message.message}`;
+            parentEl.appendChild(newMessageEl);
         }
         // Message from the user
         else {
-        const newMessageEl = document.createElement('p');
-        newMessageEl.textContent = `You: ${message.message}`;
-        parentEl.appendChild(newMessageEl);
+            const newMessageEl = document.createElement('p');
+            newMessageEl.textContent = `You: ${message.message}`;
+            parentEl.appendChild(newMessageEl);
         }
     }
 }
@@ -228,11 +228,9 @@ class Messages {
             const socket = new WebSocket(`${protocol}://${window.location.host}/ws?chatId=${chat.chatId}`);
         
             socket.onmessage = async (event) => {
-              const msg = JSON.parse(await event.data.text());
-              if (msg.type === GameEndEvent) {
-                this.displayMsg('player', msg.from, `scored ${msg.value.score}`);
-              } else if (msg.type === GameStartEvent) {
-                this.displayMsg('player', msg.from, `started a new game`);
+              const msg = JSON.parse(await event.data.text())
+              if(msg.chatId === JSON.parse(localStorage.getItem('currChatId'))){
+                await this.displayMessage(msg)
               }
             }
             socket.onclose = (event) => {
@@ -244,20 +242,38 @@ class Messages {
     }
 
     async sendMessage() {
+        const chatId = JSON.parse(localStorage.getItem('currChatId'))
         const messageText = document.getElementById('message-to-send').value
-        const newMessage = this.createNewMessage(messageText)
-        await this.displayMessage(messageText)
+        const newMessage = this.createNewMessage(messageText, chatId)
+
+        await this.displayMessage(newMessage)
         await this.storeMessage(newMessage)
         //clear input text box
         const textEl = document.getElementById('message-to-send')
         textEl.value = ''
+
+        const currSocket = this.getCurrSocket()
+        if(currSocket){
+            currSocket.send(JSON.stringify(newMessage))
+        }
     }
 
-    async displayMessage(messageText){
+    async displayMessage(msg){
+        const user = JSON.parse(localStorage.getItem('currUser'))
         const parentEl = document.getElementById('messages-id')
         const newMessageEl = document.createElement('p')
-        newMessageEl.textContent = `You: ${messageText}`
-        parentEl.appendChild(newMessageEl)
+
+        if (msg.authorUsername !== user.username) {
+            const user2 = await getUser(msg.authorUsername);
+            const name = user2.firstName;
+            newMessageEl.textContent = `${name}: ${msg.message}`;
+            parentEl.appendChild(newMessageEl);
+        }
+        // Message from the user
+        else {
+            newMessageEl.textContent = `You: ${msg.message}`;
+            parentEl.appendChild(newMessageEl);
+        }
     }
     
     async storeMessage(newMessage){
@@ -273,14 +289,24 @@ class Messages {
         }
     }
 
-    createNewMessage(messageText){
+    createNewMessage(messageText, chatId){
         const newMessage = {
             authorUsername: JSON.parse(localStorage.getItem('currUser')).username,
             message: messageText,
-            chatId: JSON.parse(localStorage.getItem('currChatId')),
+            chatId: chatId,
             recipientUsername: JSON.parse(localStorage.getItem('chatOtherUsername'))
         }
         return newMessage
+    }
+
+    getCurrSocket(){
+        const currChatId = JSON.parse(localStorage.getItem('currChatId'))
+        for(const socketObj of this.sockets){
+            if(socketObj.chatId === currChatId){
+                return socketObj.socket
+            }
+        }
+        return null
     }
 }
 const messages = new Messages()

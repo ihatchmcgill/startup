@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 });
 
 function logout() {
-    localStorage.removeItem('currUser');
+    localStorage.clear()
     fetch(`/src/api/logout`, {
       method: 'delete',
     });
