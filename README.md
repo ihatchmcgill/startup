@@ -105,3 +105,12 @@ For this deliverable I associate listings, messages, and reviews with specific u
 - **existing user** - Stores data under the same user if the user already exists.
 - **Use MongoDB to store credentials** - Stores both user and their data.
 - **Restricts functionality** - You cannot use the application until an account is created
+
+## WebSocket deliverable
+
+For this deliverable I used an array of websockets to handle messages from each of user's chats
+
+- **Backend listens for WebSocket connection** - done!
+- **Frontend makes WebSocket connection** - frontend makes a websocket connection for each chat.
+- **Data sent over WebSocket connection** - done!
+- **WebSocket data displayed** - All user messages display in realtime.
