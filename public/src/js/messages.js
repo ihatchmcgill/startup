@@ -6,43 +6,12 @@ document.addEventListener('DOMContentLoaded', async function() {
         await loadMessages(chats[0].chatId)
         localStorage.setItem('currChatId', JSON.stringify(chats[0].chatId))
         const chat = await getChat(chats[0].chatId)
-        if(chat){
-            if(chat.username1 === user.username){
-                localStorage.setItem('chatOtherUsername', JSON.stringify(chat.username2))
-            }else{
-                localStorage.setItem('chatOtherUsername', JSON.stringify(chat.username1))
-            }
-        }
+        setCurrChatId(chat)
+        messages.configureWebsockets(chats)
     }else{
         loadNoChatMessage()
     }
 });
-
-class WebSocket {
-    socket;
-
-    constructor(){
-        this.configureWebsocket();
-    }
-
-    configureWebsocket(){
-        const chatId = JSON.parse(localStorage.getItem('currChatId'))
-        // Adjust the webSocket protocol to what is being used for HTTP
-        const protocol = window.location.protocol === 'http:' ? 'ws' : 'wss';
-        socket = new WebSocket(`${protocol}://${window.location.host}/ws?chatId=${chatId}`);
-    
-        this.socket.onmessage = async (event) => {
-          const msg = JSON.parse(await event.data.text());
-          if (msg.type === GameEndEvent) {
-            this.displayMsg('player', msg.from, `scored ${msg.value.score}`);
-          } else if (msg.type === GameStartEvent) {
-            this.displayMsg('player', msg.from, `started a new game`);
-          }
-        }
-    }
- 
-
-}
 
 function loadNoChatMessage(){
     const chatAreaEl = document.getElementById('chat-box-area')
@@ -74,7 +43,7 @@ async function loadChats(chats, user){
     const chatMessageControls = document.createElement('div')
     chatMessageControls.setAttribute('class', 'message-controls')
     chatMessageControls.innerHTML = '<input type="text" id="message-to-send" placeholder="Type your message">' +
-                                    '<button class="send-button" onclick="sendMessage()">Send</button>'
+                                    '<button class="send-button" onclick="messages.sendMessage()">Send</button>'
 
     chatAreaEl.append(chatNameDiv)
     chatAreaEl.append(chatMessagesDiv)
@@ -95,6 +64,57 @@ async function loadChats(chats, user){
             `<p class="username" onclick="switchInbox(this)">${user2.fullName}</p>` +
             '</div>'
           chatList.append(chatItem)
+        }
+    }
+}
+
+//Gets messages based on a given chatId. 
+async function loadMessages(chatId){
+    console.log('loadingMessages', chatId)
+    const user = JSON.parse(localStorage.getItem('currUser'))
+    const parentEl = document.getElementById('messages-id')
+    
+    clearChatBox()
+
+    const baseUrl = '/src/api/messages'
+    const queryParams = {
+        chatId: chatId
+    }
+    const queryString = Object.keys(queryParams)
+        .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(queryParams[key]))
+        .join('&')
+
+    const urlWithParams = baseUrl + '?' + queryString;
+    let messages = []
+    try{
+        const response = await fetch(urlWithParams)
+        if(response.ok){
+            messages = await response.json()
+        }
+    } catch(e) {
+        console.log(e)
+    }
+
+    await displayMessageArr(parentEl, user, messages)
+}
+
+//displays messages 
+async function displayMessageArr(parentEl, user, messages){
+    // Display messages
+    for (const message of messages) {
+        // Messages not from the user
+        if (message.authorUsername !== user.username) {
+        const newMessageEl = document.createElement('p');
+        const user2 = await getUser(message.authorUsername);
+        const name = user2.firstName;
+        newMessageEl.textContent = `${name}: ${message.message}`;
+        parentEl.appendChild(newMessageEl);
+        }
+        // Message from the user
+        else {
+        const newMessageEl = document.createElement('p');
+        newMessageEl.textContent = `You: ${message.message}`;
+        parentEl.appendChild(newMessageEl);
         }
     }
 }
@@ -167,55 +187,20 @@ async function getChat(chatId){
     }
 }
 
-function getLocalMessages(requestedChatId){
-    const messages = localStorage.getItem('messages')
-    //Populate local storage with placeholder messages
-    let userMessages = []
-    messages.forEach(message => {
-        if((message.chatId === requestedChatId)){
-            userMessages.push(message)
-        }
-    })
-    return userMessages
-}
-
-async function sendMessage() {
-    const messageText = document.getElementById('message-to-send').value
-    const newMessage = await createNewMessage(messageText)
-    await displayMessage(messageText)
-    await storeMessage(newMessage)
-    //clear input text box
-    const textEl = document.getElementById('message-to-send')
-    textEl.value = ''
-}
-
-async function displayMessage(messageText){
+function clearChatBox(){
     const parentEl = document.getElementById('messages-id')
-    const newMessageEl = document.createElement('p')
-    newMessageEl.textContent = `You: ${messageText}`
-    parentEl.appendChild(newMessageEl)
-}
-
-async function createNewMessage(messageText){
-    const newMessage = {
-        authorUsername: JSON.parse(localStorage.getItem('currUser')).username,
-        message: messageText,
-        chatId: JSON.parse(localStorage.getItem('currChatId')),
-        recipientUsername: JSON.parse(localStorage.getItem('chatOtherUsername'))
+    while(parentEl.firstChild){
+        parentEl.removeChild(parentEl.firstChild)
     }
-    return newMessage
 }
 
-async function storeMessage(newMessage){
-    //Add new message to message array in local storage
-    try{
-        const response = await fetch('/src/api/message', {
-            method: 'POST',
-            headers: {'content-type': 'application/json'},
-            body: JSON.stringify(newMessage),
-        });
-    } catch {
-        console.log('Unable to store message in DB', e)
+function setCurrChatId(chat){
+    if(chat){
+        if(chat.username1 === user.username){
+            localStorage.setItem('chatOtherUsername', JSON.stringify(chat.username2))
+        }else{
+            localStorage.setItem('chatOtherUsername', JSON.stringify(chat.username1))
+        }
     }
 }
 
@@ -230,59 +215,78 @@ async function switchInbox(element){
     await loadMessages(chatId)
 
     const chat = await getChat(chatId)
-    if(chat){
-        if(chat.username1 === user.username){
-            localStorage.setItem('chatOtherUsername', JSON.stringify(chat.username2))
-        }else{
-            localStorage.setItem('chatOtherUsername', JSON.stringify(chat.username1))
-        }
-    }
-    
+    setCurrChatId(chat)
 }
 
-async function loadMessages(chatId){
-    console.log('loadingMessages', chatId)
-    const user = JSON.parse(localStorage.getItem('currUser'))
-    const parentEl = document.getElementById('messages-id')
+class Messages {
+    sockets = []
+
+    configureWebsockets(chats){
+        for(const chat of chats){
+            // Adjust the webSocket protocol to what is being used for HTTP
+            const protocol = window.location.protocol === 'http:' ? 'ws' : 'wss';
+            const socket = new WebSocket(`${protocol}://${window.location.host}/ws?chatId=${chat.chatId}`);
+        
+            socket.onmessage = async (event) => {
+              const msg = JSON.parse(await event.data.text());
+              if (msg.type === GameEndEvent) {
+                this.displayMsg('player', msg.from, `scored ${msg.value.score}`);
+              } else if (msg.type === GameStartEvent) {
+                this.displayMsg('player', msg.from, `started a new game`);
+              }
+            }
+            socket.onclose = (event) => {
+                console.log('closing socket for chat: ', chat.chatId)
+            }
+
+            this.sockets.push({socket: socket, chatId: chat.chatId})
+        }
+    }
+
+    async sendMessage() {
+        const messageText = document.getElementById('message-to-send').value
+        const newMessage = this.createNewMessage(messageText)
+        await this.displayMessage(messageText)
+        await this.storeMessage(newMessage)
+        //clear input text box
+        const textEl = document.getElementById('message-to-send')
+        textEl.value = ''
+    }
+
+    async displayMessage(messageText){
+        const parentEl = document.getElementById('messages-id')
+        const newMessageEl = document.createElement('p')
+        newMessageEl.textContent = `You: ${messageText}`
+        parentEl.appendChild(newMessageEl)
+    }
     
-    while(parentEl.firstChild){
-        parentEl.removeChild(parentEl.firstChild)
+    async storeMessage(newMessage){
+        //Add new message to message array in local storage
+        try{
+            const response = await fetch('/src/api/message', {
+                method: 'POST',
+                headers: {'content-type': 'application/json'},
+                body: JSON.stringify(newMessage),
+            });
+        } catch {
+            console.log('Unable to store message in DB', e)
+        }
     }
 
-    const baseUrl = '/src/api/messages'
-    const queryParams = {
-        chatId: chatId
-    }
-    const queryString = Object.keys(queryParams)
-        .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(queryParams[key]))
-        .join('&')
-
-    const urlWithParams = baseUrl + '?' + queryString;
-    let messages = []
-    try{
-        const response = await fetch(urlWithParams)
-        if(response.ok){
-            messages = await response.json()
+    createNewMessage(messageText){
+        const newMessage = {
+            authorUsername: JSON.parse(localStorage.getItem('currUser')).username,
+            message: messageText,
+            chatId: JSON.parse(localStorage.getItem('currChatId')),
+            recipientUsername: JSON.parse(localStorage.getItem('chatOtherUsername'))
         }
-    } catch(e) {
-        console.log(e)
-    }
-
-    // Display messages
-    for (const message of messages) {
-        // Messages not from the user
-        if (message.authorUsername !== user.username) {
-        const newMessageEl = document.createElement('p');
-        const user2 = await getUser(message.authorUsername);
-        const name = user2.firstName;
-        newMessageEl.textContent = `${name}: ${message.message}`;
-        parentEl.appendChild(newMessageEl);
-        }
-        // Message from the user
-        else {
-        const newMessageEl = document.createElement('p');
-        newMessageEl.textContent = `You: ${message.message}`;
-        parentEl.appendChild(newMessageEl);
-        }
+        return newMessage
     }
 }
+const messages = new Messages()
+
+window.addEventListener('beforeunload', (event) => {
+    for(const socketObj in messages.sockets){
+        socketObj.socket.close()
+    }
+})
