@@ -23,7 +23,7 @@ app.set('trust proxy', true);
 
 // Router for service endpoints
 const apiRouter = express.Router();
-app.use('/src/api', apiRouter);
+app.use('/api', apiRouter);
 
 //Create a new User
 apiRouter.post('/createAccount', async (req, res) => {
@@ -44,12 +44,10 @@ apiRouter.post('/login', async (req, res) => {
   console.log(req.body)
   if (user) {
     if (await bcrypt.compare(req.body.password, user.password)) {
-      //Check authToken table for an existing authToken
-      console.log('failure')
       setAuthCookie(res, user.token);
       res.send(user);
     }else{
-      console.log('ivalid password')
+      console.log('invalid password')
       res.status(401).send({ msg: 'Unauthorized' });
     }
   }else{
