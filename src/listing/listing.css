@@ -1,7 +1,8 @@
-.body {
+.body, html {
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     margin: 0;
     padding: 0;
+    background-color: lightgrey;
 }
 
 .header {
@@ -13,44 +14,59 @@
 
 .header h1{
     margin-top: 0;
+    margin-bottom: 10px;
 }
 
 nav{
-    font-size: .8em;
+    font-size: 1em;
     color: #202A25;
 }
 
-nav ul {
+nav menu {
     list-style-type: none;
-    margin: 0;
     padding: 0;
+    margin: 0;
 }
   
-nav ul li {
+nav menu li {
     display: inline-block;
     margin-right: 10px;
 }
 
-nav li:hover {
+nav menu li a:hover {
     color: #86A5D9; 
 }
 
-.container {
+.page-info{
+    text-align: center;
     color: #26F0F1;
+    background-color: #202A25;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+}
+
+.content{
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.page-body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    text-align: center;
     justify-content: center;
-    height: 100vh;
-    background-color: #202A25;
+    margin-bottom: 0;
 }
 
-.container ul{
+.page-body ul{
     list-style-type: none;
+    margin-bottom: 0;
 }
 
-
-.container ul li input {
+.page-body input {
     width: 100%;
     padding: 10px;
     margin-bottom: 10px;
@@ -58,7 +74,7 @@ nav li:hover {
     border-radius: 5px;
 }
   
-.container button {
+.page-body button {
     padding: 10px;
     border: none;
     border-radius: 5px;
@@ -68,12 +84,49 @@ nav li:hover {
     margin:0px;
 }
   
-.container button:hover {
+.page-body button:hover {
     background-color: #2980b9;
 }
 
+.page-body ul {
+    list-style: none;
+    padding: 0;
+}
+  
+.page-body li {
+    margin-bottom: 10px;
+}
+
+.input-container {
+    display: flex;
+    align-items: center;
+}
+  
+label {
+    flex: 1;
+    text-align: right;
+    padding-right: 10px;
+}
+  
+input {
+    flex: 2;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+h5{
+    margin: 0;
+    padding:0;
+    margin-bottom: 10px;
+    color: #5F4BB6;
+
+}
+
+h5:hover {
+    color: #86A5D9;
+}
+
 footer {
-    flex: 0 30px;
     background-color: #C4EBC8;
     text-align: center;
     color: #5F4BB6;
