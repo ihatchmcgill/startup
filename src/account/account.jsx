@@ -1,5 +1,5 @@
 import React from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
+
 import './account.css';
 
 import ProfileImage from './profile.png'

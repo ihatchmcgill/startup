@@ -35,7 +35,7 @@ nav li:hover {
     color: #86A5D9; 
 }
 
-.container {
+.login-container {
     color: #26F0F1;
     display: flex;
     flex-direction: column;
@@ -43,14 +43,15 @@ nav li:hover {
     justify-content: center;
     height: 100vh;
     background-color: #202A25;
+    border: 0;
 }
 
-.container ul{
+.login-container  ul{
     list-style-type: none;
 }
 
 
-.container ul li input {
+.login-container  ul li input {
     width: 100%;
     padding: 10px;
     margin-bottom: 10px;
@@ -58,7 +59,7 @@ nav li:hover {
     border-radius: 5px;
 }
   
-.container button {
+.login-container  button {
     padding: 10px;
     border: none;
     border-radius: 5px;
@@ -68,7 +69,7 @@ nav li:hover {
     margin:0px;
 }
   
-.container button:hover {
+.login-container  button:hover {
     background-color: #2980b9;
 }
 

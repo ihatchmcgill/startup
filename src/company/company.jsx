@@ -1,7 +1,6 @@
 import React from 'react';
 import Button from 'react-bootstrap/Button';
 
-import 'bootstrap/dist/css/bootstrap.min.css';
 import './company.css';
 
 import CompanyLogo from './company.png'
@@ -93,7 +92,7 @@ export function Company() {
     })
 
 
-    await fetch('/src/api/updateReviewComment', {
+    await fetch('/api/updateReviewComment', {
       method: 'POST',
       headers: {'content-type': 'application/json'},
       body: JSON.stringify(

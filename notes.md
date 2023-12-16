@@ -7,7 +7,7 @@ I learned in this assignment about conflict resolution and how to merge branches
 ssh -i ~/.ssh/bargoKP.pem ubuntu@bargojobs.com
 
 # Deploy Script
-./deployFiles.sh -k ~/.ssh/bargoKP.pem -h bargojobs.com -s {service}
+./deployReact.sh -k ~/.ssh/bargoKP.pem -h bargojobs.com -s {service}
 
 # Midterm Review
 1. In the following code, what does the link element do?

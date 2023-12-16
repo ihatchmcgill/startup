@@ -1,7 +1,6 @@
 import React from 'react';
 import Button from 'react-bootstrap/Button';
 
-import 'bootstrap/dist/css/bootstrap.min.css';
 import './feed.css';
 
 import FeedItem from './feed.png'
@@ -79,7 +78,6 @@ export function Feed() {
 
   return (
     <>
-    <div className='body'>
       <div className="page-info">
         <h2>My Feed</h2>
       </div>
@@ -99,7 +97,7 @@ export function Feed() {
           <div className="feed-area" id="feed-area">{listingItems}</div>
         </div>
       </div>
-    </div>
+
     </>
   );
 }

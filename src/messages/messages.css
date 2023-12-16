@@ -145,3 +145,8 @@ footer {
 footer a:hover {
     color: #86A5D9;
 }
+
+img{
+    height: 150px;
+    width: 150px
+}

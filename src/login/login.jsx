@@ -3,6 +3,9 @@ import React from 'react';
 import Button from 'react-bootstrap/Button';
 import { useNavigate } from 'react-router-dom';
 
+import './login.css';
+
+
 export function Login({ updateAuthState }) {
   const navigate = useNavigate();
   const [userName, setUserName] = React.useState('');
@@ -44,7 +47,7 @@ async function authenticateUser(creds){
 
   return (
     <>
-    <div id="form-container" className="container">
+    <div id="form-container" className="login-container">
       <ul id="login-form">
           <li>
               <label>Username: </label>

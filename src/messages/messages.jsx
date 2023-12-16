@@ -1,6 +1,7 @@
 import React from 'react';
+import  CurrChatData from './currChatData'
 
-import 'bootstrap/dist/css/bootstrap.min.css';
+
 import './messages.css';
 
 import ProfileIcon from './profile.png'
@@ -8,15 +9,19 @@ import ProfileIcon from './profile.png'
 
 export function Messages() {
   const [currUser, setCurrUser] = React.useState(JSON.parse(localStorage.getItem('currUser')))
+  const [otherChatUsername, setOtherChatUsername] = React.useState(null)
   const [chats, setChats] = React.useState([])
-  const [sockets, setSockets] = React.useState([])
+  const [chatList, setChatList] = React.useState([])
+  const [loadingChats, setLoadingChats] = React.useState(true)
+  const [currChatId, setCurrChatId] = React.useState('')
 
+
+  //Begin by getting all chat's for specified user
   React.useEffect(() => {
     async function fetchChats () {
-      const user = JSON.parse(localStorage.getItem('currUser'))
       const baseUrl = '/api/chats'
       const queryParams = {
-          username: user.username
+          username: currUser.username
       }
       const queryString = Object.keys(queryParams)
           .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(queryParams[key]))
@@ -27,60 +32,109 @@ export function Messages() {
           const response = await fetch(urlWithParams)
           if(response.ok){
               setChats(await response.json())
-              localStorage.setItem('chats', JSON.stringify(chats))
           }
       } catch(e){
           console.log(e)
           alert('Unable to load latest chat history. Please try again later.')
           setChats(JSON.parse(localStorage.getItem('chats')))
+      }finally {
+        setLoadingChats(false); // Set loading to false regardless of success or failure
       }
     }
     fetchChats()
-  }, []);
+    }, [currUser.username])
 
-  let chatItems = []
-  let chatList = []
-  let i = 0
-  chats.forEach(async (chat) =>{
-    let chatUser
-    if(chat.username1 === user.username){
-      chatUser = await getUser(chat.username2)
-    }else{
-        chatUser = await getUser(chat.username1)
+
+  React.useEffect(() => {
+    const fetchChatList = async () => {
+      const newChatList = await Promise.all(
+        chats.map(async (chat) => {
+          let chatUser;
+          if (chat.username1 === currUser.username) {
+            chatUser = await getUser(chat.username2);
+
+          } else {
+            chatUser = await getUser(chat.username1);
+          }
+          return (
+            <li key={chat.chatId}>
+              <div className="chat-item" id={chat.chatId}>
+                <img className="profile-icon" src={ProfileIcon} alt="Profile Icon" />
+                <p className="username" onClick={async () => await handleInboxChange(chat)}>{chatUser.fullName}</p>
+              </div>
+            </li>
+          );
+        })
+      );
+      setChatList(newChatList);
+    };
+
+    if (!loadingChats) {
+      fetchChatList();
+      setCurrChatId(chats[0].chatId)
+
+      if (chats[0].username1 === currUser.username) {
+        setOtherChatUsername(chats[0].username2)
+
+      } else {
+        setOtherChatUsername(chats[0].username1)
+      }
+
+      localStorage.setItem('chats', JSON.stringify(chats))
     }
-    chatItems.push(
-      <div key={i} className='chat-box'>
-        <div id='chat-name'>{chatUser.fullName}</div>
-        <div id='messages-id' className='messages' ></div>
-        <div className='message-controls'>
-          <input type="text" id="message-to-send" placeholder="Type your message"></input>
-          <button className="send-button" onclick="messages.sendMessage()">Send</button>
-        </div>
-      </div>
-    )
-    chatList.push(
-      <li key={chat.chatId}>
-        <div className="chat-item" id={chat.chatId}></div>
-        <img className="profile-icon" src={ProfileIcon} alt="Profile Icon" />
-        <p className="username" onClick={() => switchInbox()}>${chatUser.fullName}</p>
-      </li>
-    )
-    i++
-  })
+  }, [chats, currUser.username, loadingChats]);
+
+  async function handleInboxChange(chat){
+    setCurrChatId(chat.chatId)
+    if (chat.username1 === currUser.username) {
+      setOtherChatUsername(chat.username2)
+
+    } else {
+      setOtherChatUsername(chat.username1)
+    }
+  }
+
+  async function getUser(username){
+    const baseUrl = '/api/user'
+    const queryParams = {
+        username: username
+    }
+    const queryString = Object.keys(queryParams)
+        .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(queryParams[key]))
+        .join('&')
+
+    const urlWithParams = baseUrl + '?' + queryString;
+    try{
+        const response = await fetch(urlWithParams)
+        const user = await response.json()
+        return user
+    } catch(e){
+        console.log(e)
+        return false;
+    }
+  }
 
 
   return (
     <>
     <div className='body'>
-      <div class="page-info">
+      <div className="page-info">
           <h2>Inbox</h2>
       </div>
-      <div class="content"> 
-        <div class="page-body">
-          <div class="message-senders">
-            <ul id="chat-list">{chatList}</ul>
-          </div>
-          <div id="chat-box-area" class="chatbox">{chatItems}</div>
+      <div className="content"> 
+        <div className="page-body">
+            {loadingChats ? (
+              <p>Loading chats...</p>
+              ) : (
+              <>
+                <div className="message-senders">
+                  <ul id="chat-list">{chatList}</ul>
+                </div>
+                <div id="chat-box-area" className="chatbox">
+                  <CurrChatData currUser={currUser} currChatId={currChatId} otherChatUsername={otherChatUsername}/>
+                </div>
+              </>
+            )}
         </div>
       </div>    
     </div>

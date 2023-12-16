@@ -9,10 +9,8 @@ import { Feed } from './feed/feed';
 import { Messages } from './messages/messages';
 import { About } from './about/about';
 
-import 'bootstrap/dist/css/bootstrap.min.css';
-import './app.css';
 
-export default function App() {
+function App() {
   const [authState, setAuthState] = React.useState('Unauthenticated');
 
   return (
@@ -69,3 +67,5 @@ export default function App() {
 function NotFound() {
   return <main className='container-fluid bg-secondary text-center'>404: Return to sender. Address unknown.</main>;
 }
+
+export default App;
