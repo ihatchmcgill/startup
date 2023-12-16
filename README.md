@@ -114,3 +114,13 @@ For this deliverable I used an array of websockets to handle messages from each 
 - **Frontend makes WebSocket connection** - frontend makes a websocket connection for each chat.
 - **Data sent over WebSocket connection** - done!
 - **WebSocket data displayed** - All user messages display in realtime.
+
+
+## React deliverable
+
+For this deliverable I converted the application over to use React. It really messed up my styling but I am hoping since this module isn't focused on styling it will be okay.
+
+- **Bundled and transpiled** - done!
+- **Components** - Multiple components used throughout.
+- **Router** - All components provide routing to one another via a nav bar
+- **Hooks** - useState and useEffect hooks used throughout the program
